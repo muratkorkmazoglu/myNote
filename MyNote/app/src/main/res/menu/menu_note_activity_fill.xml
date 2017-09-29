@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.krkmz.mynote.MainActivity">
+
+    <item
+        android:id="@+id/save"
+        android:orderInCategory="0"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="Kaydet" />
+    <item
+        android:id="@+id/update"
+        android:orderInCategory="2"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Düzenle" />
+    <item
+        android:id="@+id/deleteFill"
+        android:orderInCategory="3"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Sil" />
+
+</menu>
