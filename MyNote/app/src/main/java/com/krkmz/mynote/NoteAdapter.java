@@ -3,6 +3,7 @@ package com.krkmz.mynote;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -88,7 +89,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
         return view_holder;
 
-        //return new MyViewHolder(itemView);
+      
     }
 
     @Override
@@ -101,6 +102,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
             holder.content.setText(noteModel.getContent().substring(0, 150));
         } else {
             holder.content.setText(noteModel.getContent().toString());
+        }
+        if (modelList.get(position).getImage()!=null){
+            Log.d("IMAGE","IMAGE");
         }
 
 

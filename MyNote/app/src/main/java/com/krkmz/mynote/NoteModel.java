@@ -1,6 +1,7 @@
 package com.krkmz.mynote;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ public class NoteModel implements Serializable {
     private String title;
     private String content;
     private int id;
+    private byte [] image;
 
     public NoteModel(long dateTime, String title, String content) {
         this.dateTime = dateTime;
@@ -21,6 +23,15 @@ public class NoteModel implements Serializable {
     }
     public NoteModel(){
 
+    }
+
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public int getId() {

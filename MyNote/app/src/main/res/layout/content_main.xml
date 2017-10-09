@@ -8,10 +8,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.krkmz.mynote.MainActivity"
     tools:showIn="@layout/activity_main"
-    android:background="#F9FBE7">
+    android:background="#E1F5FE">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerView"></android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 </LinearLayout>

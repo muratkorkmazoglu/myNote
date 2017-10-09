@@ -99,10 +99,30 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.deleteAll) {
-            DataBase db = new DataBase(getApplicationContext());
-            db.Sil();
-            Listele();
-            Toast.makeText(getApplicationContext(),"Tüm Kayıtlar Silindi!",Toast.LENGTH_LONG).show();
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Tüm Kayıtlar Silinecek");
+            builder.setMessage("Emin Misiniz ?");
+            builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    actionMode.finish();
+
+                }
+            });
+
+            builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id1) {
+                    Log.d("EVETTT", "EVETTT");
+                    DataBase db = new DataBase(getApplicationContext());
+                    db.Sil();
+                    Listele();
+                    Toast.makeText(getApplicationContext(),"Tüm Kayıtlar Silindi!",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            builder.show();
 
             return true;
         }
@@ -128,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         modelList = db.tumKayitlariGetir();
 
             noteAdapter = new NoteAdapter(this, modelList, new NoteAdapter.CustomItemClickListener() {
+
                 @Override
                 public void onItemClick(int position) {
                     NoteModel noteModel = modelList.get(position);
@@ -193,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
                     builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id1) {
-                            Log.d("EVETTT", "EVETTT");
+                            //Log.d("EVETTT", "EVETTT");
                             DataBase db = new DataBase(getApplicationContext());
                             db.Sil(id);
                             mode.finish();

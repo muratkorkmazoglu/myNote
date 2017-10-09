@@ -1,8 +1,22 @@
 package com.krkmz.mynote;
 
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,18 +24,37 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 public class NoteActivity extends AppCompatActivity {
 
     private EditText etTitle, etContent;
+    private ImageView imageView;
     private NoteModel noteModelIntent;
     private boolean tiklandi = false;
     private boolean changed = false;
+    private Button button;
+    private final int REQ_CODE_SPEECH_OUTPUT = 143;
+    final int YOUR_SELECT_PICTURE_REQUEST_CODE = 100;
+    final int SELECT_PICTURE = 22;
+    private Uri picUri;
+    private Bitmap bitmap;
+    private AlertDialog.Builder alertadd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,25 +63,79 @@ public class NoteActivity extends AppCompatActivity {
 
         etTitle = (EditText) findViewById(R.id.etTitle);
         etContent = (EditText) findViewById(R.id.etContent);
+        button = (Button) findViewById(R.id.voice);
+        imageView = (ImageView) findViewById(R.id.imgSave);
 
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
 
         if (noteModelIntent != null) {
             etTitle.setText(noteModelIntent.getTitle().toString());
             etContent.setText(noteModelIntent.getContent().toString());
+            if (noteModelIntent.getImage()!=null){
+                byte [] bytes=noteModelIntent.getImage();
+                Bitmap bitmapp= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                imageView.setImageBitmap(bitmapp);
+            }
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
         }
+
         eTChangeListener(etTitle);
         eTChangeListener(etContent);
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openMic();
+            }
+        });
 
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (bitmap != null) {
+                    alertadd = new AlertDialog.Builder(NoteActivity.this);
+                    LayoutInflater factory = LayoutInflater.from(NoteActivity.this);
+                    final View view1 = factory.inflate(R.layout.sample, null);
+                    ImageView imageview;
+                    imageview = view1.findViewById(R.id.dialog_imageview);
+                    imageview.setImageBitmap(bitmap);
+                    alertadd.setView(view1);
+                    alertadd.show();
+                }
+
+            }
+        });
+    }
+
+    private void openMic() {
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Şimdi Konuşun");
+
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_OUTPUT);
+        } catch (ActivityNotFoundException tim) {
+
+        }
 
     }
 
     private void guncelle() {
         DataBase db = new DataBase(getApplicationContext());
-        db.Guncelle(noteModelIntent.getId(), System.currentTimeMillis(), etTitle.getText().toString(), etContent.getText().toString());
+        NoteModel model=new NoteModel();
+        model.setId(noteModelIntent.getId());
+        model.setDateTime(System.currentTimeMillis());
+        model.setTitle(etTitle.getText().toString());
+        model.setContent(etContent.getText().toString());
+        if (bitmap!=null){
+            byte [] byteArray=getByteArray(bitmap);
+            model.setImage(byteArray);
+        }
+        db.Guncelle(model);
     }
 
     private void eTChangeListener(EditText et) {
@@ -60,7 +147,7 @@ public class NoteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                changed=true;
+                changed = true;
             }
 
             @Override
@@ -85,26 +172,34 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (changed){
+        if (changed) {
             AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
             builder.setTitle("Kayıt");
             builder.setMessage("Değişiklikler Kaydedilsin Mi?");
-            builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-
-
-                }
-            });
-
             builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id1) {
-                  guncelle();
-                    finish();
+                    if (noteModelIntent == null) {
+                        KayıtEkle();
+                        finish();
+                    } else {
+                        guncelle();
+                        finish();
+                    }
+
                 }
             });
+            builder.setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    finish();
+
+                }
+            });
+
+
             builder.setCancelable(false);
             builder.show();
-        }else {
+        } else {
             super.onBackPressed();
         }
 
@@ -112,35 +207,10 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        DataBase db = new DataBase(getApplicationContext());
         switch (item.getItemId()) {
             case R.id.save:
-                DataBase db = new DataBase(getApplicationContext());
-                if (tiklandi) {
-
-                  guncelle();
-                    Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
-                    finish();
-                } else {
-                    if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
-
-                        NoteModel noteModel = new NoteModel(System.currentTimeMillis(), etTitle.getText().toString(), etContent.getText().toString());
-
-                        long id = db.kayitEkle(noteModel);
-                        if (id == -1) {
-                            Toast.makeText(getApplicationContext(), "Kayıt Sırasında Bir Hata Oluştu", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Kayıt İşlemi Başarılı", Toast.LENGTH_LONG).show();
-                        }
-                        finish();
-                    } else if (etTitle.getText().toString().trim().equals("") && etContent.getText().toString().trim().equals("")) {
-                        Toast.makeText(getApplicationContext(), "En az bir değer girmelisiniz ", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-
-
-
+                KayıtEkle();
                 break;
 
             case R.id.update:
@@ -175,12 +245,131 @@ public class NoteActivity extends AppCompatActivity {
                 dataBase.Sil(noteModelIntent.getId());
 
                 break;
+            case R.id.saveImage:
+
+                AlertDialog.Builder getImageFrom = new AlertDialog.Builder(NoteActivity.this);
+                final CharSequence[] opsChars = {"Kamera", "Galeri"};
+                getImageFrom.setItems(opsChars, new android.content.DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
+                        } else if (which == 1) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent,
+                                    "Galeri"), SELECT_PICTURE);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                getImageFrom.show();
+
+                break;
 
         }
 
         return true;
     }
 
+    public void KayıtEkle() {
+
+        DataBase db = new DataBase(getApplicationContext());
+        if (tiklandi) {
+            guncelle();
+            Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
+
+                NoteModel noteModel = new NoteModel();
+                //System.currentTimeMillis(), etTitle.getText().toString(), etContent.getText().toString());
+                noteModel.setTitle(etTitle.getText().toString());
+                noteModel.setContent(etContent.getText().toString());
+                noteModel.setDateTime(System.currentTimeMillis());
+
+                if (bitmap!=null){
+                    byte [] byteArray=getByteArray(bitmap);
+                    noteModel.setImage(byteArray);
+                }
+
+                long id = db.kayitEkle(noteModel);
+                if (id == -1) {
+                    Toast.makeText(getApplicationContext(), "Kayıt Sırasında Bir Hata Oluştu", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Kayıt İşlemi Başarılı", Toast.LENGTH_LONG).show();
+                }
+                finish();
+            } else if (etTitle.getText().toString().trim().equals("") && etContent.getText().toString().trim().equals("")) {
+                Toast.makeText(getApplicationContext(), "En az bir değer girmelisiniz ", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+    }
+
+    private byte[] getByteArray(Bitmap bitmap) {
+
+        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,0,bos);
+        return bos.toByteArray();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_OUTPUT:
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> voiceInText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    etContent.setText(voiceInText.get((0)));
+                }
+                break;
+            case YOUR_SELECT_PICTURE_REQUEST_CODE:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri selectedImage = data.getData();
+
+                    try {
+
+                        Bitmap myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                        bitmap = rotateImage(myBitmap);
+                        imageView.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                break;
+
+            case SELECT_PICTURE:
+                if (resultCode == RESULT_OK && data != null) {
+                    picUri = data.getData();
+
+
+                    try {
+                        Bitmap myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), picUri);
+                        bitmap = rotateImage(myBitmap);
+                        imageView.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+                break;
+        }
+    }
+
+    public static Bitmap rotateImage(Bitmap source) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
 
 
 }

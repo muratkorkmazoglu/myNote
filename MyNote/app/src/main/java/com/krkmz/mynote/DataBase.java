@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
+
     private static final String DATABASE_NAME = "database";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "note_table";
@@ -18,6 +19,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String TITLE = "title";
     private static final String CONTENT = "content";
     private static final String DATE = "tarih";
+    private static final String IMAGE = "_image";
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -26,14 +28,27 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
-                + ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + TITLE + " TEXT,"
-                + CONTENT + " TEXT,"
-                + DATE + " INTEGER)";
-        db.execSQL(CREATE_TABLE);
+//        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
+//                + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                + TITLE + " TEXT, "
+//                + CONTENT + " TEXT, "
+//                + DATE + " INTEGER, "
+//                + IMAGE + " BLOB);" ;
+//        db.execSQL(CREATE_TABLE);
+
+        db.execSQL("CREATE TABLE " + TABLE_NAME +
+                " (" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                TITLE + " TEXT, " +
+                CONTENT + " TEXT, " +
+                DATE + " INTEGER, " +
+                IMAGE + " BLOB);");
+
+
 
     }
+
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
@@ -51,6 +66,10 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(CONTENT, noteModel.getContent());
         cv.put(DATE, noteModel.getDateTime());
 
+        if (noteModel.getImage() != null) {
+            cv.put(IMAGE, noteModel.getImage());
+        }
+
         long id = db.insert(TABLE_NAME, null, cv);
         db.close();
 
@@ -60,12 +79,13 @@ public class DataBase extends SQLiteOpenHelper {
     public List<NoteModel> tumKayitlariGetir() {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] sutunlar = new String[]{ID, TITLE, CONTENT, DATE};
-        Cursor c = db.query(TABLE_NAME, sutunlar, null, null, null, null, null);
+        //String[] sutunlar = new String[]{ID, TITLE, CONTENT, DATE, IMAGE};
+        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, null);
         int titleNo = c.getColumnIndex(TITLE);
         int contentNo = c.getColumnIndex(CONTENT);
         int dateNo = c.getColumnIndex(DATE);
         int idNo = c.getColumnIndex(ID);
+        int imageNo = c.getColumnIndex(IMAGE);
 
         List<NoteModel> modelList = new ArrayList<NoteModel>();
 
@@ -77,6 +97,11 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setDateTime(c.getInt(dateNo));
             noteModel.setId(c.getInt(idNo));
 
+           // if (c.getBlob(imageNo) != null) {
+                noteModel.setImage(c.getBlob(imageNo));
+            //}
+
+
             modelList.add(noteModel);
 
         }
@@ -85,24 +110,30 @@ public class DataBase extends SQLiteOpenHelper {
 
     }
 
-    public void Guncelle(int id, long tarih, String title, String content) {
+    public void Guncelle(NoteModel model) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(TITLE, title);
-        cv.put(CONTENT, content);
-        cv.put(DATE, tarih);
+        cv.put(TITLE, model.getTitle());
+        cv.put(CONTENT, model.getContent());
+        cv.put(DATE, model.getDateTime());
 
-        db.update(TABLE_NAME, cv, ID + "=" + id, null);
+        if (model.getImage() != null) {
+            cv.put(IMAGE, model.getImage());
+        }
+
+        db.update(TABLE_NAME, cv, ID + "=" + model.getId(), null);
         db.close();
     }
-    public void Sil(int id){
-        SQLiteDatabase db=this.getWritableDatabase();
-        db.delete(TABLE_NAME,ID+"="+id,null);
+
+    public void Sil(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, ID + "=" + id, null);
         db.close();
     }
-    public void Sil(){
-        SQLiteDatabase db=this.getWritableDatabase();
+
+    public void Sil() {
+        SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, null, null);
         db.close();
     }

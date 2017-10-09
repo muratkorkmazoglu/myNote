@@ -12,14 +12,17 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="ToolBarStyle" >
-        <item name="android:textColorPrimary">@color/colorToolbar</item>
-        <item name="android:textColorSecondary">@color/colorToolbar</item>
-        <item name="actionMenuTextColor">@color/colorToolbar</item>
+    <style name="ToolBarStyle" parent="Theme.AppCompat.Light" >
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
     </style>
+    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.Light">
+        ...
+        <item name="actionMenuTextColor">#FFF</item>
+        ...
+    </style>`
 
 
 
