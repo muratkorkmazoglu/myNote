@@ -2,6 +2,8 @@ package com.krkmz.mynote;
 
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,6 +15,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -35,10 +38,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static java.lang.System.out;
 
 
 public class NoteActivity extends AppCompatActivity {
@@ -47,7 +58,10 @@ public class NoteActivity extends AppCompatActivity {
     private ImageView imageView;
     private NoteModel noteModelIntent;
     private boolean tiklandi = false;
+    private boolean tiklandiImage = false;
     private boolean changed = false;
+    private boolean imageChanged = false;
+    private boolean imageDeleted = false;
     private Button button;
     private final int REQ_CODE_SPEECH_OUTPUT = 143;
     final int YOUR_SELECT_PICTURE_REQUEST_CODE = 100;
@@ -55,6 +69,7 @@ public class NoteActivity extends AppCompatActivity {
     private Uri picUri;
     private Bitmap bitmap;
     private AlertDialog.Builder alertadd;
+    private String fileName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,19 +80,18 @@ public class NoteActivity extends AppCompatActivity {
         etContent = (EditText) findViewById(R.id.etContent);
         button = (Button) findViewById(R.id.voice);
         imageView = (ImageView) findViewById(R.id.imgSave);
-
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
 
         if (noteModelIntent != null) {
             etTitle.setText(noteModelIntent.getTitle().toString());
             etContent.setText(noteModelIntent.getContent().toString());
-            if (noteModelIntent.getImage()!=null){
-                byte [] bytes=noteModelIntent.getImage();
-                Bitmap bitmapp= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                imageView.setImageBitmap(bitmapp);
-            }
+            //if (noteModelIntent.getDirectory() != null) {
+                bitmap = loadImageBitmap(getApplicationContext(), noteModelIntent.getDirectory());
+                imageView.setImageBitmap(bitmap);
+            //}
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
+            imageView.setEnabled(false);
         }
 
         eTChangeListener(etTitle);
@@ -103,8 +117,41 @@ public class NoteActivity extends AppCompatActivity {
                     imageview.setImageBitmap(bitmap);
                     alertadd.setView(view1);
                     alertadd.show();
+
                 }
 
+            }
+        });
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                AlertDialog.Builder getImageFrom = new AlertDialog.Builder(NoteActivity.this);
+                getImageFrom.setTitle("İşlem Seçiniz");
+                final CharSequence[] opsChars = {"Değiştir", "Sil"};
+                getImageFrom.setItems(opsChars, new android.content.DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            ChangeImage();
+                            imageChanged = true;
+
+                        } else if (which == 1) {
+
+                            File dir = getFilesDir();
+                            File file = new File(dir, noteModelIntent.getDirectory());
+                            file.delete();
+                            imageDeleted=true;
+                            imageView.setImageBitmap(null);
+
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                getImageFrom.show();
+
+                return false;
             }
         });
     }
@@ -115,7 +162,6 @@ public class NoteActivity extends AppCompatActivity {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Şimdi Konuşun");
-
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_OUTPUT);
         } catch (ActivityNotFoundException tim) {
@@ -125,15 +171,21 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void guncelle() {
+
         DataBase db = new DataBase(getApplicationContext());
-        NoteModel model=new NoteModel();
+        NoteModel model = new NoteModel();
         model.setId(noteModelIntent.getId());
         model.setDateTime(System.currentTimeMillis());
         model.setTitle(etTitle.getText().toString());
         model.setContent(etContent.getText().toString());
-        if (bitmap!=null){
-            byte [] byteArray=getByteArray(bitmap);
-            model.setImage(byteArray);
+
+        if (imageChanged) {
+
+            saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
+            model.setDirectory(fileName+".jpeg");
+        }
+        if (imageDeleted){
+            Log.d("LOG","LOG");
         }
         db.Guncelle(model);
     }
@@ -217,8 +269,10 @@ public class NoteActivity extends AppCompatActivity {
 
                 etTitle.setEnabled(true);
                 etContent.setEnabled(true);
+                imageView.setEnabled(true);
                 tiklandi = true;
                 break;
+
             case R.id.deleteFill:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
@@ -246,33 +300,37 @@ public class NoteActivity extends AppCompatActivity {
 
                 break;
             case R.id.saveImage:
-
-                AlertDialog.Builder getImageFrom = new AlertDialog.Builder(NoteActivity.this);
-                final CharSequence[] opsChars = {"Kamera", "Galeri"};
-                getImageFrom.setItems(opsChars, new android.content.DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(cameraIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
-                        } else if (which == 1) {
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent,
-                                    "Galeri"), SELECT_PICTURE);
-                        }
-                        dialog.dismiss();
-                    }
-                });
-                getImageFrom.show();
-
+                ChangeImage();
                 break;
 
         }
 
         return true;
+    }
+
+    private void ChangeImage() {
+
+        AlertDialog.Builder getImageFrom = new AlertDialog.Builder(NoteActivity.this);
+        getImageFrom.setTitle("İşlem Seçiniz");
+        final CharSequence[] opsChars = {"Kamera", "Galeri"};
+        getImageFrom.setItems(opsChars, new android.content.DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
+                } else if (which == 1) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Galeri"), SELECT_PICTURE);
+                }
+                dialog.dismiss();
+            }
+        });
+        getImageFrom.show();
     }
 
     public void KayıtEkle() {
@@ -282,18 +340,19 @@ public class NoteActivity extends AppCompatActivity {
             guncelle();
             Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
             finish();
-        } else {
+        }
+        else {
             if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
 
                 NoteModel noteModel = new NoteModel();
-                //System.currentTimeMillis(), etTitle.getText().toString(), etContent.getText().toString());
                 noteModel.setTitle(etTitle.getText().toString());
                 noteModel.setContent(etContent.getText().toString());
                 noteModel.setDateTime(System.currentTimeMillis());
 
-                if (bitmap!=null){
-                    byte [] byteArray=getByteArray(bitmap);
-                    noteModel.setImage(byteArray);
+                if (bitmap != null) {
+                    fileName = getPictureName();
+                    saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
+                    noteModel.setDirectory(fileName + ".jpeg");
                 }
 
                 long id = db.kayitEkle(noteModel);
@@ -311,12 +370,38 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
-    private byte[] getByteArray(Bitmap bitmap) {
+    public void saveImage(Context context, Bitmap bitmap, String name) {
 
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,0,bos);
-        return bos.toByteArray();
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = context.openFileOutput(name, Context.MODE_PRIVATE);
+            rotateImage(bitmap).compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    private String getPictureName() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddd_HHmmss");
+        String timestamp = simpleDateFormat.format(new Date());
+        return "img" + timestamp.toString();
+    }
+
+    public Bitmap loadImageBitmap(Context context, String name) {
+
+        FileInputStream fileInputStream;
+        Bitmap bitmap1 = null;
+        try {
+            fileInputStream = context.openFileInput(name);
+
+            //bitmap1 = BitmapFactory.decodeStream(bitmap1);
+            bitmap1 = BitmapFactory.decodeStream(fileInputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap1;
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -366,9 +451,8 @@ public class NoteActivity extends AppCompatActivity {
 
     public static Bitmap rotateImage(Bitmap source) {
         Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
+        matrix.postRotate(0);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
 

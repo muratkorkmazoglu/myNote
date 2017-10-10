@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/save"
-        android:orderInCategory="0"
+        android:orderInCategory="6"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_save"
         android:title="Kaydet" />
@@ -22,5 +22,11 @@
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="Sil" />
+    <item
+        android:id="@+id/saveImage"
+        android:orderInCategory="4"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="Fotoğraf Çek" />
 
 </menu>

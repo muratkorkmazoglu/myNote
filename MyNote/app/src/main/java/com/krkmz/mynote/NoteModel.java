@@ -14,7 +14,7 @@ public class NoteModel implements Serializable {
     private String title;
     private String content;
     private int id;
-    private byte [] image;
+    private String directory;
 
     public NoteModel(long dateTime, String title, String content) {
         this.dateTime = dateTime;
@@ -25,13 +25,12 @@ public class NoteModel implements Serializable {
 
     }
 
-
-    public byte[] getImage() {
-        return image;
+    public String getDirectory() {
+        return directory;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     public int getId() {

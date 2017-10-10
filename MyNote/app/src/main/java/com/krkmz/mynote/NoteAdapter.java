@@ -68,7 +68,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     @Override
     public NoteAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item_layout, parent, false);
 
         final MyViewHolder view_holder = new NoteAdapter.MyViewHolder(itemView);
@@ -103,11 +102,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         } else {
             holder.content.setText(noteModel.getContent().toString());
         }
-        if (modelList.get(position).getImage()!=null){
-            Log.d("IMAGE","IMAGE");
-        }
-
-
     }
 
     @Override

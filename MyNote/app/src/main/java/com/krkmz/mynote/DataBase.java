@@ -19,7 +19,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String TITLE = "title";
     private static final String CONTENT = "content";
     private static final String DATE = "tarih";
-    private static final String IMAGE = "_image";
+    private static final String DIRECTORY = "directory";
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,26 +28,16 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-//        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
-//                + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-//                + TITLE + " TEXT, "
-//                + CONTENT + " TEXT, "
-//                + DATE + " INTEGER, "
-//                + IMAGE + " BLOB);" ;
-//        db.execSQL(CREATE_TABLE);
 
         db.execSQL("CREATE TABLE " + TABLE_NAME +
                 " (" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TITLE + " TEXT, " +
                 CONTENT + " TEXT, " +
                 DATE + " INTEGER, " +
-                IMAGE + " BLOB);");
-
+                DIRECTORY + " TEXT);");
 
 
     }
-
-
 
 
     @Override
@@ -66,8 +56,8 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(CONTENT, noteModel.getContent());
         cv.put(DATE, noteModel.getDateTime());
 
-        if (noteModel.getImage() != null) {
-            cv.put(IMAGE, noteModel.getImage());
+        if (noteModel.getDirectory() != null) {
+            cv.put(DIRECTORY, noteModel.getDirectory());
         }
 
         long id = db.insert(TABLE_NAME, null, cv);
@@ -85,7 +75,7 @@ public class DataBase extends SQLiteOpenHelper {
         int contentNo = c.getColumnIndex(CONTENT);
         int dateNo = c.getColumnIndex(DATE);
         int idNo = c.getColumnIndex(ID);
-        int imageNo = c.getColumnIndex(IMAGE);
+        int directoryNo = c.getColumnIndex(DIRECTORY);
 
         List<NoteModel> modelList = new ArrayList<NoteModel>();
 
@@ -96,10 +86,11 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setContent(c.getString(contentNo));
             noteModel.setDateTime(c.getInt(dateNo));
             noteModel.setId(c.getInt(idNo));
+            noteModel.setDirectory(c.getString(directoryNo));
 
-           // if (c.getBlob(imageNo) != null) {
-                noteModel.setImage(c.getBlob(imageNo));
-            //}
+//             if (c.getString(directoryNo) != null) {
+//
+//            }
 
 
             modelList.add(noteModel);
@@ -117,10 +108,11 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(TITLE, model.getTitle());
         cv.put(CONTENT, model.getContent());
         cv.put(DATE, model.getDateTime());
+        cv.put(DIRECTORY, model.getDirectory());
 
-        if (model.getImage() != null) {
-            cv.put(IMAGE, model.getImage());
-        }
+//        if (model.getDirectory() != null) {
+//            );
+//        }
 
         db.update(TABLE_NAME, cv, ID + "=" + model.getId(), null);
         db.close();
