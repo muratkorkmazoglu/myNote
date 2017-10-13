@@ -37,19 +37,27 @@
                 android:id="@+id/noteItemDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="03.10.1994"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:text="03.10.1994" />
 
             <TextView
                 android:id="@+id/noteItemContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
+                android:lines="3"
                 android:text="Content"
                 android:textColor="@android:color/background_dark"
-                android:textSize="15sp"
-                android:lines="3"/>
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/camImage"
+                android:layout_width="20dp"
+                android:layout_height="15dp"
+                android:layout_marginEnd="12dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toStartOf="@+id/noteItemDate" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

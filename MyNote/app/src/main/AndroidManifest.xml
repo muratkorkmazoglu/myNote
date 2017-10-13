@@ -22,7 +22,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".NoteActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity android:name=".ChooseActivity"/>
+
     </application>
 
 </manifest>

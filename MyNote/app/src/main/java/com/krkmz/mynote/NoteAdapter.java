@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     private List<NoteModel> modelList;
     private CustomItemClickListener listener;
     private CustomItemLongClickListener longClickListener;
+    private ImageView camImage;
 
 
     public NoteAdapter(Context context, List<NoteModel> modelList, CustomItemClickListener listener, CustomItemLongClickListener longClickListener) {
@@ -42,6 +44,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         this.modelList = modelList;
         this.listener = listener;
         this.longClickListener = longClickListener;
+
     }
 
     public NoteAdapter(Context context, List<NoteModel> modelList) {
@@ -60,6 +63,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
             title = (TextView) view.findViewById(R.id.noteItemTitle);
             content = (TextView) view.findViewById(R.id.noteItemContent);
             date = (TextView) view.findViewById(R.id.noteItemDate);
+            camImage = (ImageView) view.findViewById(R.id.camImage);
 
         }
     }
@@ -101,6 +105,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
             holder.content.setText(noteModel.getContent().substring(0, 150));
         } else {
             holder.content.setText(noteModel.getContent().toString());
+        }
+        if (noteModel.getDirectory()!=null){
+            camImage.setImageResource(R.mipmap.cam);
         }
     }
 

@@ -2,10 +2,12 @@ package com.krkmz.mynote;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class NoteModel implements Serializable {
@@ -21,6 +23,7 @@ public class NoteModel implements Serializable {
         this.title = title;
         this.content = content;
     }
+
     public NoteModel(){
 
     }
@@ -66,8 +69,17 @@ public class NoteModel implements Serializable {
     }
 
     public String getDateTimeFormatted(Context context){
-        SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy",context.getResources().getConfiguration().locale);
+
+        Locale locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = context.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            locale = context.getResources().getConfiguration().locale;
+        }
+
+        SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",locale);
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(new Date(dateTime));
+
     }
 }

@@ -1,55 +1,40 @@
 package com.krkmz.mynote;
 
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
+import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.view.ActionMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-
-import static java.lang.System.out;
 
 
 public class NoteActivity extends AppCompatActivity {
@@ -58,10 +43,9 @@ public class NoteActivity extends AppCompatActivity {
     private ImageView imageView;
     private NoteModel noteModelIntent;
     private boolean tiklandi = false;
-    private boolean tiklandiImage = false;
     private boolean changed = false;
     private boolean imageChanged = false;
-    private boolean imageDeleted = false;
+    private boolean blankImage = false;
     private Button button;
     private final int REQ_CODE_SPEECH_OUTPUT = 143;
     final int YOUR_SELECT_PICTURE_REQUEST_CODE = 100;
@@ -70,6 +54,7 @@ public class NoteActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private AlertDialog.Builder alertadd;
     private String fileName;
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,12 +68,17 @@ public class NoteActivity extends AppCompatActivity {
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
 
         if (noteModelIntent != null) {
+
             etTitle.setText(noteModelIntent.getTitle().toString());
             etContent.setText(noteModelIntent.getContent().toString());
-            //if (noteModelIntent.getDirectory() != null) {
+            if (noteModelIntent.getDirectory() != null) {
                 bitmap = loadImageBitmap(getApplicationContext(), noteModelIntent.getDirectory());
                 imageView.setImageBitmap(bitmap);
-            //}
+            } else {
+                blankImage = true;
+            }
+
+
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
             imageView.setEnabled(false);
@@ -109,6 +99,7 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (bitmap != null) {
+
                     alertadd = new AlertDialog.Builder(NoteActivity.this);
                     LayoutInflater factory = LayoutInflater.from(NoteActivity.this);
                     final View view1 = factory.inflate(R.layout.sample, null);
@@ -119,7 +110,6 @@ public class NoteActivity extends AppCompatActivity {
                     alertadd.show();
 
                 }
-
             }
         });
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -142,7 +132,6 @@ public class NoteActivity extends AppCompatActivity {
                             File dir = getFilesDir();
                             File file = new File(dir, noteModelIntent.getDirectory());
                             file.delete();
-                            imageDeleted=true;
                             imageView.setImageBitmap(null);
 
                         }
@@ -154,6 +143,7 @@ public class NoteActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     private void openMic() {
@@ -180,13 +170,17 @@ public class NoteActivity extends AppCompatActivity {
         model.setContent(etContent.getText().toString());
 
         if (imageChanged) {
-
             saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
-            model.setDirectory(fileName+".jpeg");
+            model.setDirectory(fileName + ".jpeg");
         }
-        if (imageDeleted){
-            Log.d("LOG","LOG");
+        if (blankImage) {
+            Log.d("BLANKIMAGE", "BLANKIMAGE");
+            fileName = getPictureName();
+            saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
+            model.setDirectory(fileName + ".jpeg");
         }
+
+
         db.Guncelle(model);
     }
 
@@ -212,7 +206,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (noteModelIntent != null) {
-            getMenuInflater().inflate(R.menu.menu_note_activity_fill, menu);
+            getMenuInflater().inflate(R.menu.menu_note_update, menu);
             return true;
         } else {
             getMenuInflater().inflate(R.menu.menu_note_activity, menu);
@@ -265,47 +259,40 @@ public class NoteActivity extends AppCompatActivity {
                 KayıtEkle();
                 break;
 
-            case R.id.update:
+            case R.id.updateAll:
 
                 etTitle.setEnabled(true);
                 etContent.setEnabled(true);
                 imageView.setEnabled(true);
+
+                MyActionModeCallBack callBack = new MyActionModeCallBack();
+                actionMode = startSupportActionMode(callBack);
+
                 tiklandi = true;
                 break;
 
-            case R.id.deleteFill:
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
-                builder.setTitle("Kayıt Silinecek");
-                builder.setMessage("Emin Misiniz ?");
-                builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-
-                    }
-                });
-
-                builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id1) {
-                        DataBase db = new DataBase(getApplicationContext());
-                        db.Sil(noteModelIntent.getId());
-
-                        finish();
-                    }
-                });
-                builder.setCancelable(false);
-                builder.show();
-                DataBase dataBase = new DataBase(getApplicationContext());
-                dataBase.Sil(noteModelIntent.getId());
+            case R.id.share:
+                String message = etTitle.getText().toString()+ "\n" + etContent.getText().toString();
+                shareMessage(message);
 
                 break;
-            case R.id.saveImage:
+
+            case R.id.image:
                 ChangeImage();
+
                 break;
 
         }
 
         return true;
+    }
+
+    private void shareMessage(CharSequence message) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+        startActivity(Intent.createChooser(shareIntent, "Gönder"));
+
     }
 
     private void ChangeImage() {
@@ -340,8 +327,7 @@ public class NoteActivity extends AppCompatActivity {
             guncelle();
             Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
             finish();
-        }
-        else {
+        } else {
             if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
 
                 NoteModel noteModel = new NoteModel();
@@ -402,7 +388,6 @@ public class NoteActivity extends AppCompatActivity {
         return bitmap1;
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -453,6 +438,67 @@ public class NoteActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(0);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+
+    class MyActionModeCallBack implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            getMenuInflater().inflate(R.menu.menu_note_activity_fill, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
+                    builder.setTitle("Kayıt Silinecek");
+                    builder.setMessage("Emin Misiniz ?");
+                    builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+
+                        }
+                    });
+
+                    builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id1) {
+                            DataBase db = new DataBase(getApplicationContext());
+                            db.Sil(noteModelIntent.getId());
+
+                            finish();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    builder.show();
+                    DataBase dataBase = new DataBase(getApplicationContext());
+                    dataBase.Sil(noteModelIntent.getId());
+
+                    break;
+                case R.id.save:
+
+                    guncelle();
+                    finish();
+                    break;
+                case R.id.camera:
+
+                    ChangeImage();
+                    break;
+            }
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+        }
     }
 
 

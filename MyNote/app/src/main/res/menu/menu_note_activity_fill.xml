@@ -6,25 +6,20 @@
 
     <item
         android:id="@+id/save"
-        android:orderInCategory="6"
+        android:orderInCategory="3"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_save"
         android:title="Kaydet" />
-    <item
-        android:id="@+id/update"
-        android:orderInCategory="2"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Düzenle" />
+
     <item
         android:id="@+id/deleteFill"
-        android:orderInCategory="3"
+        android:orderInCategory="2"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="Sil" />
     <item
-        android:id="@+id/saveImage"
-        android:orderInCategory="4"
+        android:id="@+id/camera"
+        android:orderInCategory="1"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_camera"
         android:title="Fotoğraf Çek" />

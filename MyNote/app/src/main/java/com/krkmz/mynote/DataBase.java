@@ -69,8 +69,9 @@ public class DataBase extends SQLiteOpenHelper {
     public List<NoteModel> tumKayitlariGetir() {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        //String[] sutunlar = new String[]{ID, TITLE, CONTENT, DATE, IMAGE};
+        //String[] sutunlar = new String[]{ID, TITLE, CONTENT, DATE, DIRECTORY};
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, null);
+
         int titleNo = c.getColumnIndex(TITLE);
         int contentNo = c.getColumnIndex(CONTENT);
         int dateNo = c.getColumnIndex(DATE);
@@ -86,11 +87,11 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setContent(c.getString(contentNo));
             noteModel.setDateTime(c.getInt(dateNo));
             noteModel.setId(c.getInt(idNo));
-            noteModel.setDirectory(c.getString(directoryNo));
 
-//             if (c.getString(directoryNo) != null) {
-//
-//            }
+
+             if (c.getString(directoryNo) != null) {
+                 noteModel.setDirectory(c.getString(directoryNo));
+            }
 
 
             modelList.add(noteModel);
@@ -108,11 +109,11 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(TITLE, model.getTitle());
         cv.put(CONTENT, model.getContent());
         cv.put(DATE, model.getDateTime());
-        cv.put(DIRECTORY, model.getDirectory());
 
-//        if (model.getDirectory() != null) {
-//            );
-//        }
+
+        if (model.getDirectory() != null) {
+            cv.put(DIRECTORY, model.getDirectory());
+        }
 
         db.update(TABLE_NAME, cv, ID + "=" + model.getId(), null);
         db.close();
