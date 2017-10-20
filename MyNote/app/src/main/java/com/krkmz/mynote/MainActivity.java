@@ -2,6 +2,7 @@ package com.krkmz.mynote;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,11 +18,15 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView newNote, allNote, tagImage, searchImage;
+    String password;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_layout);
+
+        SharedPreferences preferences = getSharedPreferences("PREFS", 0);
+        password = preferences.getString("password", "0");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.updatePassword) {
-            Intent ıntent = new Intent(getApplicationContext(), CreatePasswordActivity.class);
-            ıntent.putExtra("value","dolu");
+            Intent ıntent = new Intent(getApplicationContext(), NewPasswordActivity.class);
+            ıntent.putExtra("password",password);
             startActivity(ıntent);
             MainActivity.this.finish();
             return true;
@@ -73,9 +78,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
 }

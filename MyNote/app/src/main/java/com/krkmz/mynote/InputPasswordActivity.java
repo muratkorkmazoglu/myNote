@@ -17,6 +17,7 @@ public class InputPasswordActivity extends AppCompatActivity {
     PatternLockView mPatternLockView;
     String password;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
