@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.krkmz.mynote.MainActivity">
 
-    <item
-        android:id="@+id/save"
-        android:orderInCategory="2"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_save"
-        android:title="Kaydet" />
+    <!--<item-->
+        <!--android:id="@+id/save"-->
+        <!--android:icon="@android:drawable/ic_menu_save"-->
+        <!--android:orderInCategory="2"-->
+        <!--android:title="Kaydet"-->
+        <!--app:showAsAction="always" />-->
     <item
         android:id="@+id/image"
-        android:orderInCategory="1"
-        app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_camera"
-        android:title="Fotoğraf Çek" />
+        android:orderInCategory="1"
+        android:title="Fotoğraf Çek"
+        app:showAsAction="always" />
+
 
 </menu>

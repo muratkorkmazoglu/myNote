@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,7 +27,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,12 +47,13 @@ public class NoteActivity extends AppCompatActivity {
 
     private EditText etTitle, etContent;
     private ImageView imageView;
+    RelativeLayout tagRl;
     private NoteModel noteModelIntent;
+    private Button saveButton;
     private boolean tiklandi = false;
     private boolean changed = false;
     private boolean imageChanged = false;
     private boolean blankImage = false;
-    private Button button;
     private final int REQ_CODE_SPEECH_OUTPUT = 143;
     final int YOUR_SELECT_PICTURE_REQUEST_CODE = 100;
     final int SELECT_PICTURE = 22;
@@ -55,6 +62,9 @@ public class NoteActivity extends AppCompatActivity {
     private AlertDialog.Builder alertadd;
     private String fileName;
     private ActionMode actionMode;
+    private Toolbar mToolbar;
+
+    private SearchableSpinner mSpinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,9 +73,13 @@ public class NoteActivity extends AppCompatActivity {
 
         etTitle = (EditText) findViewById(R.id.etTitle);
         etContent = (EditText) findViewById(R.id.etContent);
-        button = (Button) findViewById(R.id.voice);
         imageView = (ImageView) findViewById(R.id.imgSave);
+        tagRl= (RelativeLayout) findViewById(R.id.tagRl);
+        mToolbar= (Toolbar) findViewById(R.id.toolbar3);
+        
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
+        saveButton= (Button) findViewById(R.id.saveButton);
+        getSupportActionBar().setElevation(0);
 
         if (noteModelIntent != null) {
 
@@ -74,25 +88,24 @@ public class NoteActivity extends AppCompatActivity {
             if (noteModelIntent.getDirectory() != null) {
                 bitmap = loadImageBitmap(getApplicationContext(), noteModelIntent.getDirectory());
                 imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
             } else {
                 blankImage = true;
             }
-
 
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
             imageView.setEnabled(false);
         }
+        tagRl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"OYYY YEAH",Toast.LENGTH_SHORT).show();
+            }
+        });
 
         eTChangeListener(etTitle);
         eTChangeListener(etContent);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openMic();
-            }
-        });
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,20 +157,12 @@ public class NoteActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-    }
-
-    private void openMic() {
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Şimdi Konuşun");
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_OUTPUT);
-        } catch (ActivityNotFoundException tim) {
-
-        }
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                KayıtEkle();
+            }
+        });
 
     }
 
@@ -256,9 +261,9 @@ public class NoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         DataBase db = new DataBase(getApplicationContext());
         switch (item.getItemId()) {
-            case R.id.save:
-                KayıtEkle();
-                break;
+//            case R.id.save:
+//                KayıtEkle();
+//                break;
 
             case R.id.updateAll:
 
@@ -394,12 +399,7 @@ public class NoteActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case REQ_CODE_SPEECH_OUTPUT:
-                if (resultCode == RESULT_OK && null != data) {
-                    ArrayList<String> voiceInText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    etContent.setText(voiceInText.get((0)));
-                }
-                break;
+
             case YOUR_SELECT_PICTURE_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
                     Uri selectedImage = data.getData();

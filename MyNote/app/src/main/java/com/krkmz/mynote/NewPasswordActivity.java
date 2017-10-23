@@ -15,6 +15,7 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import java.util.List;
 
 public class NewPasswordActivity extends AppCompatActivity {
+
     private String password;
     private TextView createText;
     PatternLockView mPatternLockView;
@@ -24,8 +25,8 @@ public class NewPasswordActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_password_layout);
-        mPatternLockView= (PatternLockView) findViewById(R.id.pattern_lock_view);
-        createText= (TextView) findViewById(R.id.createText);
+        mPatternLockView = (PatternLockView) findViewById(R.id.pattern_lock_view);
+        createText = (TextView) findViewById(R.id.createText);
 
         SharedPreferences preferences = getSharedPreferences("PREFS", 0);
         password = preferences.getString("password", "0");
@@ -34,7 +35,8 @@ public class NewPasswordActivity extends AppCompatActivity {
         setPattern();
 
     }
-    public void setPattern(){
+
+    public void setPattern() {
 
         mPatternLockView.addPatternLockListener(new PatternLockViewListener() {
             @Override
@@ -59,7 +61,7 @@ public class NewPasswordActivity extends AppCompatActivity {
                     mPatternLockView.removePatternLockListener(this);
                     setPassword();
 
-                }else {
+                } else {
                     createText.setText("Şifre Doğru Değil");
                     mPatternLockView.clearPattern();
                 }
@@ -89,35 +91,34 @@ public class NewPasswordActivity extends AppCompatActivity {
             @Override
             public void onComplete(List<PatternLockView.Dot> pattern) {
 
-                System.out.println("First PASSWORD ---> " + firstPassword);
-                System.out.println("Second PASSWORD ---> " + secondPassword);
-                    if(firstPassword == null){
-                        firstPassword = PatternLockUtils.patternToString(mPatternLockView, pattern);
-                        createText.setText("Lütfen Deseni Tekrar Giriniz");
+                if (firstPassword == null) {
+                    firstPassword = PatternLockUtils.patternToString(mPatternLockView, pattern);
+                    createText.setText("Lütfen Deseni Tekrar Giriniz");
 
-                    } else{
-                        secondPassword = PatternLockUtils.patternToString(mPatternLockView, pattern);
-                        if (firstPassword.equals(secondPassword)) {
-                            System.out.print("3 \n");
-                            SharedPreferences preferences = getSharedPreferences("PREFS", 0);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("password", PatternLockUtils.patternToString(mPatternLockView, pattern));
-                            editor.apply();
+                } else {
 
-                            Intent ıntent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(ıntent);
-                            finish();
+                    secondPassword = PatternLockUtils.patternToString(mPatternLockView, pattern);
+                    if (firstPassword.equals(secondPassword)) {
+                        System.out.print("3 \n");
+                        SharedPreferences preferences = getSharedPreferences("PREFS", 0);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("password", PatternLockUtils.patternToString(mPatternLockView, pattern));
+                        editor.apply();
+                        Intent ıntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(ıntent);
+                        finish();
 
-                        }else{
-                            firstPassword =null;
-                            createText.setText("Şifreleriniz Uyuşmadı Tekrar Yeni Şifre Giriniz.");
-                        }
+                    } else {
+                        firstPassword = null;
+                        createText.setText("Şifreleriniz Uyuşmadı Tekrar Yeni Şifre Giriniz.");
+
                     }
+
+                }
 
                 mPatternLockView.clearPattern();
                 mPatternLockView.removePatternLockListener(this);
                 setPassword();
-
             }
 
             @Override
