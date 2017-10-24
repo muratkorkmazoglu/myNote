@@ -22,31 +22,33 @@
             android:background="@drawable/layout_bg">
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_marginLeft="3dp"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:id="@+id/imageVRl"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/cam"/>
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/genel" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textRL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/imageView"
-                android:text="GENEL" />
+                android:layout_toEndOf="@+id/imageVRl"
+                android:text="GENEL"
+                android:textColor="@color/mavi"
+                android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:id="@+id/imageBarrow"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
-                app:srcCompat="@android:drawable/arrow_down_float"
-                android:layout_marginRight="10dp"/>
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/mavi" />
 
         </RelativeLayout>
 
@@ -121,12 +123,13 @@
 
                 <Button
                     android:id="@+id/saveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@drawable/buttonshape"
                     android:text="Kaydet" />
             </RelativeLayout>
 

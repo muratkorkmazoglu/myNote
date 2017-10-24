@@ -23,7 +23,8 @@
         </activity>
         <activity android:name=".NoteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
         <activity android:name=".ChooseActivity"/>
         <activity
             android:name=".MainActivity"

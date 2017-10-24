@@ -4,4 +4,11 @@
     <color name="colorPrimaryDark">#039BE5</color>
     <color name="colorAccent">#536DFE</color>
 
+    <color name="yesil">#4be758</color>
+    <color name="sari">#d6d638</color>
+    <color name="turkuaz">#79d6ff</color>
+    <color name="kirmizi">#cd0308</color>
+    <color name="turuncu">#dd9b01</color>
+    <color name="mavi">#0265c2</color>
+
 </resources>

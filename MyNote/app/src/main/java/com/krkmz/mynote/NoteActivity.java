@@ -1,5 +1,6 @@
 package com.krkmz.mynote;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,7 +8,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.MediaStore;
@@ -20,15 +23,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -63,6 +71,10 @@ public class NoteActivity extends AppCompatActivity {
     private String fileName;
     private ActionMode actionMode;
     private Toolbar mToolbar;
+    private ListView listView;
+    private AlertDialog.Builder dialog;
+    private TextView textViewRl;
+    private ImageView barrow, imageRl;
 
     private SearchableSpinner mSpinner;
 
@@ -74,11 +86,14 @@ public class NoteActivity extends AppCompatActivity {
         etTitle = (EditText) findViewById(R.id.etTitle);
         etContent = (EditText) findViewById(R.id.etContent);
         imageView = (ImageView) findViewById(R.id.imgSave);
-        tagRl= (RelativeLayout) findViewById(R.id.tagRl);
-        mToolbar= (Toolbar) findViewById(R.id.toolbar3);
-        
+        tagRl = (RelativeLayout) findViewById(R.id.tagRl);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar3);
+        textViewRl = (TextView) findViewById(R.id.textRL);
+        imageRl = (ImageView) findViewById(R.id.imageVRl);
+        barrow = (ImageView) findViewById(R.id.imageBarrow);
+
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
-        saveButton= (Button) findViewById(R.id.saveButton);
+        saveButton = (Button) findViewById(R.id.saveButton);
         getSupportActionBar().setElevation(0);
 
         if (noteModelIntent != null) {
@@ -100,7 +115,45 @@ public class NoteActivity extends AppCompatActivity {
         tagRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"OYYY YEAH",Toast.LENGTH_SHORT).show();
+
+                ArrayList<ListModel> listArray = new ArrayList<ListModel>();
+                ListModel listModel1 = new ListModel("Genel", R.mipmap.genel);
+                ListModel listModel2 = new ListModel("Kişisel", R.mipmap.kisisel);
+                ListModel listModel3 = new ListModel("İş", R.mipmap.is);
+                ListModel listModel4 = new ListModel("Okul", R.mipmap.okul);
+                ListModel listModel5 = new ListModel("Ev", R.mipmap.ev);
+                ListModel listModel6 = new ListModel("Diğer", R.mipmap.diger);
+                listArray.add(listModel1);
+                listArray.add(listModel2);
+                listArray.add(listModel3);
+                listArray.add(listModel4);
+                listArray.add(listModel5);
+                listArray.add(listModel6);
+
+                listView = new ListView(getApplicationContext());
+
+                final CustomListAdapter adapter = new CustomListAdapter(getApplicationContext(), listArray);
+                listView.setAdapter(adapter);
+
+
+                dialog = new AlertDialog.Builder(NoteActivity.this);
+                dialog.setView(listView);
+                dialog.setTitle("Dialog Title");
+                dialog.setCancelable(true);
+
+                final AlertDialog show = dialog.show();
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        TextView textView = (TextView) view.findViewById(R.id.tvItem);
+                        String selectedText = textView.getText().toString();
+                        changeText(selectedText);
+                        show.dismiss();
+
+                    }
+                });
             }
         });
 
@@ -164,6 +217,49 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void changeText(String text) {
+            switch (text)
+            {
+                case "Genel":
+                    imageRl.setImageResource(R.mipmap.genel);
+                    textViewRl.setText("GENEL");
+                    barrow.setImageResource(R.mipmap.mavi);
+                    textViewRl.setTextColor(getResources().getColor(R.color.mavi));
+                    break;
+                case "Kişisel":
+                    imageRl.setImageResource(R.mipmap.kisisel);
+                    textViewRl.setText("KİŞİSEL");
+                    barrow.setImageResource(R.mipmap.kirmizi);
+                    textViewRl.setTextColor(getResources().getColor(R.color.kirmizi));
+                    break;
+                case "İş":
+                    imageRl.setImageResource(R.mipmap.is);
+                    textViewRl.setText("İŞ");
+                    barrow.setImageResource(R.mipmap.turkuaz);
+                    textViewRl.setTextColor(getResources().getColor(R.color.turkuaz));
+                    break;
+                case "Okul":
+                    imageRl.setImageResource(R.mipmap.okul);
+                    textViewRl.setText("OKUL");
+                    barrow.setImageResource(R.mipmap.yesil);
+                    textViewRl.setTextColor(getResources().getColor(R.color.yesil));
+
+                    break;
+                case "Ev":
+                    imageRl.setImageResource(R.mipmap.ev);
+                    textViewRl.setText("EV");
+                    barrow.setImageResource(R.mipmap.sari);
+                    textViewRl.setTextColor(getResources().getColor(R.color.sari));
+                    break;
+                case "Diğer":
+                    imageRl.setImageResource(R.mipmap.diger);
+                    textViewRl.setText("DİĞER");
+                    barrow.setImageResource(R.mipmap.turuncu);
+                    textViewRl.setTextColor(getResources().getColor(R.color.turuncu));
+                    break;
+            }
     }
 
     private void guncelle() {
@@ -278,7 +374,7 @@ public class NoteActivity extends AppCompatActivity {
                 break;
 
             case R.id.share:
-                String message = etTitle.getText().toString()+ "\n" + etContent.getText().toString();
+                String message = etTitle.getText().toString() + "\n" + etContent.getText().toString();
                 shareMessage(message);
 
                 break;
