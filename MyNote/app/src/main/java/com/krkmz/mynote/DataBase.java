@@ -20,6 +20,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String CONTENT = "content";
     private static final String DATE = "tarih";
     private static final String DIRECTORY = "directory";
+    private static final String THEME = "theme";
 
     public DataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,6 +34,7 @@ public class DataBase extends SQLiteOpenHelper {
                 " (" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TITLE + " TEXT, " +
                 CONTENT + " TEXT, " +
+                THEME + " TEXT, " +
                 DATE + " INTEGER, " +
                 DIRECTORY + " TEXT);");
 
@@ -55,6 +57,7 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(TITLE, noteModel.getTitle());
         cv.put(CONTENT, noteModel.getContent());
         cv.put(DATE, noteModel.getDateTime());
+        cv.put(THEME, noteModel.getTheme());
 
         if (noteModel.getDirectory() != null) {
             cv.put(DIRECTORY, noteModel.getDirectory());
@@ -77,6 +80,7 @@ public class DataBase extends SQLiteOpenHelper {
         int dateNo = c.getColumnIndex(DATE);
         int idNo = c.getColumnIndex(ID);
         int directoryNo = c.getColumnIndex(DIRECTORY);
+        int themeNo = c.getColumnIndex(THEME);
 
         List<NoteModel> modelList = new ArrayList<NoteModel>();
 
@@ -87,12 +91,12 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setContent(c.getString(contentNo));
             noteModel.setDateTime(c.getInt(dateNo));
             noteModel.setId(c.getInt(idNo));
+            noteModel.setTheme(c.getString(themeNo));
 
 
              if (c.getString(directoryNo) != null) {
                  noteModel.setDirectory(c.getString(directoryNo));
             }
-
 
             modelList.add(noteModel);
 
@@ -110,9 +114,11 @@ public class DataBase extends SQLiteOpenHelper {
         cv.put(CONTENT, model.getContent());
         cv.put(DATE, model.getDateTime());
 
-
         if (model.getDirectory() != null) {
             cv.put(DIRECTORY, model.getDirectory());
+        }
+        if (model.getTheme() != null) {
+            cv.put(THEME, model.getTheme());
         }
 
         db.update(TABLE_NAME, cv, ID + "=" + model.getId(), null);

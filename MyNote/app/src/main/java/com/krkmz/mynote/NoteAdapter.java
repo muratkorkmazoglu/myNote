@@ -10,16 +10,19 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> {
 
 
     public void setFilter(ArrayList<NoteModel> filter) {
-        modelList=new ArrayList<>();
+        modelList = new ArrayList<>();
         modelList.addAll(filter);
         notifyDataSetChanged();
     }
@@ -37,6 +40,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     private CustomItemClickListener listener;
     private CustomItemLongClickListener longClickListener;
     private ImageView camImage;
+    private RelativeLayout rl;
 
 
     public NoteAdapter(Context context, List<NoteModel> modelList, CustomItemClickListener listener, CustomItemLongClickListener longClickListener) {
@@ -53,17 +57,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, content, date;
+        public TextView title, content, date, themeText;
         public CardView card_view;
+        private CircleImageView circleImageView;
 
 
         public MyViewHolder(View view) {
             super(view);
             card_view = (CardView) view.findViewById(R.id.card_view);
             title = (TextView) view.findViewById(R.id.noteItemTitle);
+            themeText = (TextView) view.findViewById(R.id.tvTheme);
             content = (TextView) view.findViewById(R.id.noteItemContent);
             date = (TextView) view.findViewById(R.id.noteItemDate);
             camImage = (ImageView) view.findViewById(R.id.camImage);
+            rl = (RelativeLayout) view.findViewById(R.id.noteItemRl);
+            circleImageView = (CircleImageView) view.findViewById(R.id.profile_image);
 
         }
     }
@@ -92,7 +100,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
         return view_holder;
 
-      
+
     }
 
     @Override
@@ -101,12 +109,41 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         NoteModel noteModel = modelList.get(position);
         holder.title.setText(noteModel.getTitle().toString());
         holder.date.setText(noteModel.getDateTimeFormatted(context));
+
+        switch (noteModel.getTheme()) {
+            case "GENEl":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.genel);
+                break;
+            case "KİŞİSEL":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.kisisel);
+                break;
+            case "İŞ":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.is);
+                break;
+            case "OKUL":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.okul);
+                break;
+            case "EV":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.ev);
+                break;
+            case "DİĞER":
+                holder.themeText.setText(noteModel.getTheme().toString());
+                holder.circleImageView.setImageResource(R.mipmap.diger);
+                break;
+        }
+
+
         if (noteModel.getContent().length() > 150) {
             holder.content.setText(noteModel.getContent().substring(0, 150));
         } else {
             holder.content.setText(noteModel.getContent().toString());
         }
-        if (noteModel.getDirectory()!=null){
+        if (noteModel.getDirectory() != null) {
             camImage.setImageResource(R.mipmap.cam);
         }
     }
@@ -120,7 +157,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
 
 
 }

@@ -11,4 +11,14 @@
     <color name="turuncu">#dd9b01</color>
     <color name="mavi">#0265c2</color>
 
+    <color name="colorPrimaryYesil">#4CAF50</color>
+    <color name="colorPrimaryDarkYesil">#2E7D32</color>
+    <color name="colorAccentYesil">#FFEB3B</color>
+
+    <color name="colorPrimarySari">#d6d638</color>
+    <color name="colorPrimaryDarkSari">#AFB42B</color>
+    <color name="colorAccentSari">#64DD17</color>
+
+
+
 </resources>

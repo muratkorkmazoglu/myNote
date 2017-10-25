@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -28,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,8 +41,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,10 +77,11 @@ public class NoteActivity extends AppCompatActivity {
     private TextView textViewRl;
     private ImageView barrow, imageRl;
 
-    private SearchableSpinner mSpinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_layout);
 
@@ -95,6 +97,7 @@ public class NoteActivity extends AppCompatActivity {
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
         saveButton = (Button) findViewById(R.id.saveButton);
         getSupportActionBar().setElevation(0);
+        changeText(1);
 
         if (noteModelIntent != null) {
 
@@ -107,6 +110,30 @@ public class NoteActivity extends AppCompatActivity {
             } else {
                 blankImage = true;
             }
+            int id=0;
+            switch (noteModelIntent.getTheme()) {
+                case "GENEl":
+                    id = 1;
+                    break;
+                case "KİŞİSEL":
+                    id = 2;
+                    break;
+                case "İŞ":
+                    id = 3;
+                    break;
+                case "OKUL":
+                    id = 4;
+                    break;
+                case "EV":
+                    id = 5;
+                    break;
+                case "DİĞER":
+                    id = 6;
+                    break;
+            }
+            changeText(id);
+
+             Log.d("TEHEMEEE",noteModelIntent.getTheme().toString());
 
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
@@ -138,7 +165,7 @@ public class NoteActivity extends AppCompatActivity {
 
                 dialog = new AlertDialog.Builder(NoteActivity.this);
                 dialog.setView(listView);
-                dialog.setTitle("Dialog Title");
+                dialog.setTitle("Etiket Seçin");
                 dialog.setCancelable(true);
 
                 final AlertDialog show = dialog.show();
@@ -146,10 +173,31 @@ public class NoteActivity extends AppCompatActivity {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                        int id = 0;
                         TextView textView = (TextView) view.findViewById(R.id.tvItem);
                         String selectedText = textView.getText().toString();
-                        changeText(selectedText);
+                        Log.d("SELECTEDTEXT", selectedText.toString());
+                        switch (selectedText) {
+                            case "Genel":
+                                id = 1;
+                                break;
+                            case "Kişisel":
+                                id = 2;
+                                break;
+                            case "İş":
+                                id = 3;
+                                break;
+                            case "Okul":
+                                id = 4;
+                                break;
+                            case "Ev":
+                                id = 5;
+                                break;
+                            case "Diğer":
+                                id = 6;
+                                break;
+                        }
+                        changeText(id);
                         show.dismiss();
 
                     }
@@ -219,47 +267,64 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
-    private void changeText(String text) {
-            switch (text)
-            {
-                case "Genel":
-                    imageRl.setImageResource(R.mipmap.genel);
-                    textViewRl.setText("GENEL");
-                    barrow.setImageResource(R.mipmap.mavi);
-                    textViewRl.setTextColor(getResources().getColor(R.color.mavi));
-                    break;
-                case "Kişisel":
-                    imageRl.setImageResource(R.mipmap.kisisel);
-                    textViewRl.setText("KİŞİSEL");
-                    barrow.setImageResource(R.mipmap.kirmizi);
-                    textViewRl.setTextColor(getResources().getColor(R.color.kirmizi));
-                    break;
-                case "İş":
-                    imageRl.setImageResource(R.mipmap.is);
-                    textViewRl.setText("İŞ");
-                    barrow.setImageResource(R.mipmap.turkuaz);
-                    textViewRl.setTextColor(getResources().getColor(R.color.turkuaz));
-                    break;
-                case "Okul":
-                    imageRl.setImageResource(R.mipmap.okul);
-                    textViewRl.setText("OKUL");
-                    barrow.setImageResource(R.mipmap.yesil);
-                    textViewRl.setTextColor(getResources().getColor(R.color.yesil));
+    private void changeText(int id) {
+        switch (id) {
+            case 1:
+                imageRl.setImageResource(R.mipmap.genel);
+                textViewRl.setText("GENEL");
+                barrow.setImageResource(R.mipmap.mavi);
+                textViewRl.setTextColor(getResources().getColor(R.color.mavi));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.mavi)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.mavi));
+                break;
+            case 2:
+                imageRl.setImageResource(R.mipmap.kisisel);
+                textViewRl.setText("KİŞİSEL");
+                barrow.setImageResource(R.mipmap.kirmizi);
+                textViewRl.setTextColor(getResources().getColor(R.color.kirmizi));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.kirmizi)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.kirmizi));
+                break;
+            case 3:
+                imageRl.setImageResource(R.mipmap.is);
+                textViewRl.setText("İŞ");
+                barrow.setImageResource(R.mipmap.turkuaz);
+                textViewRl.setTextColor(getResources().getColor(R.color.turkuaz));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.turkuaz)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.turkuaz));
+                break;
+            case 4:
+                imageRl.setImageResource(R.mipmap.okul);
+                textViewRl.setText("OKUL");
+                barrow.setImageResource(R.mipmap.yesil);
+                textViewRl.setTextColor(getResources().getColor(R.color.yesil));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.yesil)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.yesil));
 
-                    break;
-                case "Ev":
-                    imageRl.setImageResource(R.mipmap.ev);
-                    textViewRl.setText("EV");
-                    barrow.setImageResource(R.mipmap.sari);
-                    textViewRl.setTextColor(getResources().getColor(R.color.sari));
-                    break;
-                case "Diğer":
-                    imageRl.setImageResource(R.mipmap.diger);
-                    textViewRl.setText("DİĞER");
-                    barrow.setImageResource(R.mipmap.turuncu);
-                    textViewRl.setTextColor(getResources().getColor(R.color.turuncu));
-                    break;
-            }
+                break;
+            case 5:
+                imageRl.setImageResource(R.mipmap.ev);
+                textViewRl.setText("EV");
+                barrow.setImageResource(R.mipmap.sari);
+                textViewRl.setTextColor(getResources().getColor(R.color.sari));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.sari)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.sari));
+                break;
+            case 6:
+                imageRl.setImageResource(R.mipmap.diger);
+                textViewRl.setText("DİĞER");
+                barrow.setImageResource(R.mipmap.turuncu);
+                textViewRl.setTextColor(getResources().getColor(R.color.turuncu));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                        .getColor(R.color.turuncu)));
+                mToolbar.setBackgroundColor(getResources().getColor(R.color.turuncu));
+                break;
+        }
     }
 
     private void guncelle() {
@@ -436,6 +501,7 @@ public class NoteActivity extends AppCompatActivity {
                 noteModel.setTitle(etTitle.getText().toString());
                 noteModel.setContent(etContent.getText().toString());
                 noteModel.setDateTime(System.currentTimeMillis());
+                noteModel.setTheme(textViewRl.getText().toString());
 
                 if (bitmap != null) {
                     fileName = getPictureName();

@@ -17,15 +17,25 @@ public class NoteModel implements Serializable {
     private String content;
     private int id;
     private String directory;
+    private String theme;
 
-    public NoteModel(long dateTime, String title, String content) {
+    public NoteModel(long dateTime, String title, String content,String theme) {
         this.dateTime = dateTime;
         this.title = title;
         this.content = content;
+        this.theme = theme;
     }
 
     public NoteModel(){
 
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public String getDirectory() {
@@ -77,7 +87,7 @@ public class NoteModel implements Serializable {
             locale = context.getResources().getConfiguration().locale;
         }
 
-        SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",locale);
+        SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy",locale);
         sdf.setTimeZone(TimeZone.getDefault());
         return sdf.format(new Date(dateTime));
 
