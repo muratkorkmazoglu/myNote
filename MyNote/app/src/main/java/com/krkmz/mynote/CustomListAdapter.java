@@ -55,7 +55,6 @@ public class CustomListAdapter extends BaseAdapter {
         tv=view.findViewById(R.id.tvItem);
         ımageView=view.findViewById(R.id.imageItem);
 
-
         tv.setText(model.get(i).getText());
         ımageView.setImageResource(model.get(i).getImage());
 

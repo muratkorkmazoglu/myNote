@@ -80,7 +80,6 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_layout);
@@ -97,7 +96,8 @@ public class NoteActivity extends AppCompatActivity {
         noteModelIntent = (NoteModel) getIntent().getSerializableExtra("myModel");
         saveButton = (Button) findViewById(R.id.saveButton);
         getSupportActionBar().setElevation(0);
-        changeText(1);
+
+
 
         if (noteModelIntent != null) {
 
@@ -112,7 +112,7 @@ public class NoteActivity extends AppCompatActivity {
             }
             int id=0;
             switch (noteModelIntent.getTheme()) {
-                case "GENEl":
+                case "GENEL":
                     id = 1;
                     break;
                 case "KİŞİSEL":
@@ -139,6 +139,7 @@ public class NoteActivity extends AppCompatActivity {
             etContent.setEnabled(false);
             imageView.setEnabled(false);
         }
+        changeText(1);
         tagRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

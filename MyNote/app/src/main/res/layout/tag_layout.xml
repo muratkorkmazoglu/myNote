@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EEEEEE"
+    >
+
+    <RelativeLayout
+        android:id="@+id/rlGenel"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFF"
+        android:onClick="tiklandi"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/genelImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/genel" />
+
+        <TextView
+            android:id="@+id/tvThemeCountGenel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tvThemeCountGenel"
+            android:layout_toEndOf="@+id/genelImage"
+            android:text="Genel"
+            android:textColor="@color/mavi"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlKisisel"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp"
+        android:background="#FFF"
+        android:onClick="tiklandi"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/kisiselImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/kisisel" />
+
+        <TextView
+            android:id="@+id/tvThemeCountKisisel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tvThemeCountKisisel"
+            android:layout_toEndOf="@+id/kisiselImage"
+            android:text="Kişisel"
+            android:textColor="@color/kirmizi"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlIs"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:onClick="tiklandi"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp"
+        android:background="#FFF"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/isImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/is" />
+
+        <TextView
+            android:id="@+id/tvThemeCountIs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tvThemeCountIs"
+            android:layout_toEndOf="@+id/isImage"
+            android:text="İş"
+            android:textColor="@color/turkuaz"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlOkul"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="6dp"
+        android:onClick="tiklandi"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp"
+        android:background="#FFF"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/okulImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/okul" />
+
+        <TextView
+            android:id="@+id/tvThemeCountOkul"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tvThemeCountOkul"
+            android:layout_toEndOf="@+id/okulImage"
+            android:text="Okul"
+            android:textColor="@color/yesil"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlEv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="6dp"
+        android:onClick="tiklandi"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp"
+        android:background="#FFF"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/evImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/ev" />
+
+        <TextView
+            android:id="@+id/tvThemeCountEv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tvThemeCountEv"
+            android:layout_toEndOf="@+id/evImage"
+            android:text="Ev"
+            android:textColor="@color/sari"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlDiger"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="6dp"
+        android:onClick="tiklandi"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="6dp"
+        android:background="#FFF"
+        android:padding="6dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/digerImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/diger" />
+
+        <TextView
+            android:id="@+id/tvThemeCountDiger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="03.10.1994"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvThemeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tvThemeCountDiger"
+            android:layout_toEndOf="@+id/digerImage"
+            android:text="Diğer"
+            android:textColor="@color/turuncu"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</LinearLayout>

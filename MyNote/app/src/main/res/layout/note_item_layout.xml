@@ -75,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/noteItemTitle"
                 android:layout_alignStart="@+id/noteItemTitle"
-                android:text="TextView"
                 android:textColor="@android:color/black"
                 android:textSize="13sp"
                 android:textStyle="bold" />

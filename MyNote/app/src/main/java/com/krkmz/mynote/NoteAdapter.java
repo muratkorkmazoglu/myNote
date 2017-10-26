@@ -111,7 +111,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         holder.date.setText(noteModel.getDateTimeFormatted(context));
 
         switch (noteModel.getTheme()) {
-            case "GENEl":
+            case "GENEL":
                 holder.themeText.setText(noteModel.getTheme().toString());
                 holder.circleImageView.setImageResource(R.mipmap.genel);
                 break;

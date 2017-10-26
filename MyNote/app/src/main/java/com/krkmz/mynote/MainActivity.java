@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         newNote = (ImageView) findViewById(R.id.newNote);
         allNote = (ImageView) findViewById(R.id.allNotes);
+        tagImage = (ImageView) findViewById(R.id.tags);
 
         newNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,11 +49,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         allNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent ıntent = new Intent(getApplicationContext(), ChooseActivity.class);
+                startActivity(ıntent);
+            }
+        });
+        tagImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent ıntent = new Intent(getApplicationContext(), TagActivity.class);
                 startActivity(ıntent);
             }
         });
