@@ -30,7 +30,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/mavi"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,7 +69,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/kirmizi"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
 
@@ -105,7 +109,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/turkuaz"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -142,7 +148,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/yesil"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
 
@@ -180,7 +188,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/sari"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
 
@@ -218,7 +228,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="03.10.1994"
-            android:textSize="12sp" />
+            android:textColor="@color/turuncu"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvThemeName"

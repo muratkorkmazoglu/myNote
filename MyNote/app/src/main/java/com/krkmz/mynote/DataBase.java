@@ -94,8 +94,8 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setTheme(c.getString(themeNo));
 
 
-             if (c.getString(directoryNo) != null) {
-                 noteModel.setDirectory(c.getString(directoryNo));
+            if (c.getString(directoryNo) != null) {
+                noteModel.setDirectory(c.getString(directoryNo));
             }
 
             modelList.add(noteModel);
@@ -129,6 +129,42 @@ public class DataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, ID + "=" + id, null);
         db.close();
+    }
+
+    public List<NoteModel> getTheme(String theme) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + THEME + " = ? ", new String[]{theme});
+        int titleNo = c.getColumnIndex(TITLE);
+        int contentNo = c.getColumnIndex(CONTENT);
+        int dateNo = c.getColumnIndex(DATE);
+        int idNo = c.getColumnIndex(ID);
+        int directoryNo = c.getColumnIndex(DIRECTORY);
+        int themeNo = c.getColumnIndex(THEME);
+
+        List<NoteModel> modelList = new ArrayList<NoteModel>();
+
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+
+            NoteModel noteModel = new NoteModel();
+            noteModel.setTitle(c.getString(titleNo));
+            noteModel.setContent(c.getString(contentNo));
+            noteModel.setDateTime(c.getInt(dateNo));
+            noteModel.setId(c.getInt(idNo));
+            noteModel.setTheme(c.getString(themeNo));
+
+
+            if (c.getString(directoryNo) != null) {
+                noteModel.setDirectory(c.getString(directoryNo));
+            }
+
+            modelList.add(noteModel);
+
+        }
+
+
+        db.close();
+        return modelList;
     }
 
     public void Sil() {

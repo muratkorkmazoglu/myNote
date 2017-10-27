@@ -2,31 +2,26 @@ package com.krkmz.mynote;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import android.app.SearchManager;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +34,8 @@ public class ChooseActivity extends AppCompatActivity {
     private ActionMode actionMode;
     private int id;
     private NoteAdapter noteAdapter;
+    private DataBase db;
+    private String theme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +45,6 @@ public class ChooseActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         registerForContextMenu(recyclerView);
 
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,12 +53,58 @@ public class ChooseActivity extends AppCompatActivity {
                 startActivity(ıntent);
             }
         });
+
+        theme = getIntent().getStringExtra("myTag");
+        if (theme!=null){
+            switch (theme){
+                case "GENEL":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.mavi)));
+                    getSupportActionBar().setTitle("Genel");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.mavi)));
+                    break;
+                case "KİŞİSEL":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.kirmizi)));
+                    getSupportActionBar().setTitle("Kişisel");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.kirmizi)));
+                    break;
+                case "EV":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.sari)));
+                    getSupportActionBar().setTitle("Ev");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.sari)));
+                    break;
+                case "OKUL":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.yesil)));
+                    getSupportActionBar().setTitle("Okul");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.yesil)));
+                    break;
+                case "İŞ":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.turkuaz)));
+                    getSupportActionBar().setTitle("İş");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.turkuaz)));
+                    break;
+                case "DİĞER":
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
+                            .getColor(R.color.turuncu)));
+                    getSupportActionBar().setTitle("Diğer");
+                    fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.turuncu)));
+                    break;
+            }
+        }
+
+        db = new DataBase(getApplicationContext());
+        modelList = new ArrayList<NoteModel>();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem menuItem=menu.findItem(R.id.menuSearch);
+        MenuItem menuItem = menu.findItem(R.id.menuSearch);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -75,17 +116,16 @@ public class ChooseActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                newText=newText.toLowerCase();
-                ArrayList<NoteModel> newList=new ArrayList<>();
-                for (NoteModel noteModel:modelList){
-                    String icerik=noteModel.getContent().toLowerCase();
-                    String title=noteModel.getTitle().toLowerCase();
-                    if (icerik.contains(newText) || title.contains(newText)){
+                newText = newText.toLowerCase();
+                ArrayList<NoteModel> newList = new ArrayList<>();
+                for (NoteModel noteModel : modelList) {
+                    String icerik = noteModel.getContent().toLowerCase();
+                    String title = noteModel.getTitle().toLowerCase();
+                    if (icerik.contains(newText) || title.contains(newText)) {
                         newList.add(noteModel);
                     }
                 }
                 noteAdapter.setFilter(newList);
-
 
 
                 return true;
@@ -119,7 +159,7 @@ public class ChooseActivity extends AppCompatActivity {
                     DataBase db = new DataBase(getApplicationContext());
                     db.Sil();
                     Listele();
-                    Toast.makeText(getApplicationContext(),"Tüm Kayıtlar Silindi!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Tüm Kayıtlar Silindi!", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -139,19 +179,24 @@ public class ChooseActivity extends AppCompatActivity {
         recyclerView.setAdapter(null);
 
         Listele();
+
+
     }
 
-    private void Listele() {
+    public void Listele() {
 
-        DataBase db = new DataBase(getApplicationContext());
 
-        modelList = new ArrayList<NoteModel>();
-        modelList = db.tumKayitlariGetir();
+        if (theme != null) {
+            modelList = db.getTheme(theme);
+        } else {
+            modelList = db.tumKayitlariGetir();
+        }
 
         noteAdapter = new NoteAdapter(this, modelList, new NoteAdapter.CustomItemClickListener() {
 
             @Override
             public void onItemClick(int position) {
+
                 NoteModel noteModel = modelList.get(position);
                 Intent ıntent = new Intent(ChooseActivity.this, NoteActivity.class);
                 ıntent.putExtra("myModel", (Serializable) noteModel);
@@ -200,6 +245,7 @@ public class ChooseActivity extends AppCompatActivity {
         @Override
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
+
                 case R.id.delete:
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActivity.this);
@@ -215,7 +261,6 @@ public class ChooseActivity extends AppCompatActivity {
 
                     builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id1) {
-                            //Log.d("EVETTT", "EVETTT");
                             DataBase db = new DataBase(getApplicationContext());
                             db.Sil(id);
                             mode.finish();
@@ -224,7 +269,6 @@ public class ChooseActivity extends AppCompatActivity {
                     });
 
                     builder.show();
-
                     break;
             }
             return true;

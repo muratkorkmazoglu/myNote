@@ -99,6 +99,7 @@ public class NoteActivity extends AppCompatActivity {
 
 
 
+
         if (noteModelIntent != null) {
 
             etTitle.setText(noteModelIntent.getTitle().toString());
