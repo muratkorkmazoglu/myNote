@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         newNote = (ImageView) findViewById(R.id.newNote);
         allNote = (ImageView) findViewById(R.id.allNotes);
         tagImage = (ImageView) findViewById(R.id.tags);
+        searchImage = (ImageView) findViewById(R.id.searchNote);
 
         newNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent ıntent = new Intent(getApplicationContext(), TagActivity.class);
+                startActivity(ıntent);
+            }
+        });
+        searchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent ıntent = new Intent(getApplicationContext(), TodoListActivity.class);
                 startActivity(ıntent);
             }
         });

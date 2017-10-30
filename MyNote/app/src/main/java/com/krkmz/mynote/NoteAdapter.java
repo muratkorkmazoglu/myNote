@@ -143,6 +143,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
         } else {
             holder.content.setText(noteModel.getContent().toString());
         }
+
         if (noteModel.getDirectory() != null) {
             camImage.setImageResource(R.mipmap.cam);
         }

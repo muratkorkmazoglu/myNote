@@ -63,7 +63,6 @@ public class NoteActivity extends AppCompatActivity {
     private boolean changed = false;
     private boolean imageChanged = false;
     private boolean blankImage = false;
-    private final int REQ_CODE_SPEECH_OUTPUT = 143;
     final int YOUR_SELECT_PICTURE_REQUEST_CODE = 100;
     final int SELECT_PICTURE = 22;
     private Uri picUri;
@@ -98,7 +97,7 @@ public class NoteActivity extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
 
 
-
+        changeText(1);
 
         if (noteModelIntent != null) {
 
@@ -111,7 +110,7 @@ public class NoteActivity extends AppCompatActivity {
             } else {
                 blankImage = true;
             }
-            int id=0;
+            int id = 0;
             switch (noteModelIntent.getTheme()) {
                 case "GENEL":
                     id = 1;
@@ -134,13 +133,12 @@ public class NoteActivity extends AppCompatActivity {
             }
             changeText(id);
 
-             Log.d("TEHEMEEE",noteModelIntent.getTheme().toString());
-
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
             imageView.setEnabled(false);
+            saveButton.setEnabled(false);
         }
-        changeText(1);
+
         tagRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -337,17 +335,18 @@ public class NoteActivity extends AppCompatActivity {
         model.setDateTime(System.currentTimeMillis());
         model.setTitle(etTitle.getText().toString());
         model.setContent(etContent.getText().toString());
+        model.setTheme(textViewRl.getText().toString());
 
         if (imageChanged) {
             saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
             model.setDirectory(fileName + ".jpeg");
         }
-        if (blankImage) {
-            Log.d("BLANKIMAGE", "BLANKIMAGE");
-            fileName = getPictureName();
-            saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
-            model.setDirectory(fileName + ".jpeg");
-        }
+//        if (blankImage) {
+//            Log.d("BLANKIMAGE", "BLANKIMAGE");
+//            fileName = getPictureName();
+//            saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
+//            model.setDirectory(fileName + ".jpeg");
+//        }
 
 
         db.Guncelle(model);
@@ -433,6 +432,7 @@ public class NoteActivity extends AppCompatActivity {
                 etTitle.setEnabled(true);
                 etContent.setEnabled(true);
                 imageView.setEnabled(true);
+                saveButton.setEnabled(true);
 
                 MyActionModeCallBack callBack = new MyActionModeCallBack();
                 actionMode = startSupportActionMode(callBack);
@@ -441,9 +441,9 @@ public class NoteActivity extends AppCompatActivity {
                 break;
 
             case R.id.share:
+
                 String message = etTitle.getText().toString() + "\n" + etContent.getText().toString();
                 shareMessage(message);
-
                 break;
 
             case R.id.image:
@@ -457,6 +457,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void shareMessage(CharSequence message) {
+
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, message);
@@ -487,42 +488,46 @@ public class NoteActivity extends AppCompatActivity {
             }
         });
         getImageFrom.show();
+
     }
 
     public void KayıtEkle() {
 
-        DataBase db = new DataBase(getApplicationContext());
-        if (tiklandi) {
-            guncelle();
-            Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
-            finish();
-        } else {
-            if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
 
-                NoteModel noteModel = new NoteModel();
-                noteModel.setTitle(etTitle.getText().toString());
-                noteModel.setContent(etContent.getText().toString());
-                noteModel.setDateTime(System.currentTimeMillis());
-                noteModel.setTheme(textViewRl.getText().toString());
-
-                if (bitmap != null) {
-                    fileName = getPictureName();
-                    saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
-                    noteModel.setDirectory(fileName + ".jpeg");
-                }
-
-                long id = db.kayitEkle(noteModel);
-                if (id == -1) {
-                    Toast.makeText(getApplicationContext(), "Kayıt Sırasında Bir Hata Oluştu", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Kayıt İşlemi Başarılı", Toast.LENGTH_LONG).show();
-                }
+            DataBase db = new DataBase(getApplicationContext());
+            if (tiklandi) {
+                guncelle();
+                Toast.makeText(getApplicationContext(), "Kayıt Güncellendi", Toast.LENGTH_LONG).show();
                 finish();
-            } else if (etTitle.getText().toString().trim().equals("") && etContent.getText().toString().trim().equals("")) {
-                Toast.makeText(getApplicationContext(), "En az bir değer girmelisiniz ", Toast.LENGTH_LONG).show();
+            } else {
+                if (!etTitle.getText().toString().trim().equals("") || !etContent.getText().toString().trim().equals("")) {
+
+                    NoteModel noteModel = new NoteModel();
+                    noteModel.setTitle(etTitle.getText().toString());
+                    noteModel.setContent(etContent.getText().toString());
+                    noteModel.setDateTime(System.currentTimeMillis());
+                    noteModel.setTheme(textViewRl.getText().toString());
+
+                    if (bitmap != null) {
+                        fileName = getPictureName();
+                        saveImage(getApplicationContext(), bitmap, fileName + ".jpeg");
+                        noteModel.setDirectory(fileName + ".jpeg");
+                    }
+
+                    long id = db.kayitEkle(noteModel);
+                    if (id == -1) {
+                        Toast.makeText(getApplicationContext(), "Kayıt Sırasında Bir Hata Oluştu", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Kayıt İşlemi Başarılı", Toast.LENGTH_LONG).show();
+                    }
+                    finish();
+                } else if (etTitle.getText().toString().trim().equals("") && etContent.getText().toString().trim().equals("")) {
+                    Toast.makeText(getApplicationContext(), "En az bir değer girmelisiniz ", Toast.LENGTH_LONG).show();
+                }
+
             }
 
-        }
+
 
     }
 
@@ -549,8 +554,6 @@ public class NoteActivity extends AppCompatActivity {
         Bitmap bitmap1 = null;
         try {
             fileInputStream = context.openFileInput(name);
-
-            //bitmap1 = BitmapFactory.decodeStream(bitmap1);
             bitmap1 = BitmapFactory.decodeStream(fileInputStream);
         } catch (Exception e) {
             e.printStackTrace();
@@ -622,7 +625,8 @@ public class NoteActivity extends AppCompatActivity {
         @Override
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.delete:
+                case R.id.deleteFill:
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(NoteActivity.this);
                     builder.setTitle("Kayıt Silinecek");
                     builder.setMessage("Emin Misiniz ?");
@@ -642,9 +646,7 @@ public class NoteActivity extends AppCompatActivity {
                         }
                     });
                     builder.setCancelable(false);
-                    builder.show();
-                    DataBase dataBase = new DataBase(getApplicationContext());
-                    dataBase.Sil(noteModelIntent.getId());
+                    builder.create().show();
 
                     break;
                 case R.id.save:
