@@ -3,24 +3,16 @@ package com.krkmz.mynote;
 
 public class TodoModel {
 
-    private String listTitle;
+
     private String listItemsName;
     private String checked;
 
     public TodoModel(){}
 
-    public TodoModel(String listTitle, String listItemsName, String checked) {
-        this.listTitle = listTitle;
+    public TodoModel(String listItemsName, String checked) {
+
         this.checked=checked;
         this.listItemsName=listItemsName;
-    }
-
-    public String getListTitle() {
-        return listTitle;
-    }
-
-    public void setListTitle(String listTitle) {
-        this.listTitle = listTitle;
     }
 
     public String getListItemsName() {
@@ -38,4 +30,6 @@ public class TodoModel {
     public void setChecked(String checked) {
         this.checked = checked;
     }
+
+
 }

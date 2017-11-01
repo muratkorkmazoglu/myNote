@@ -18,13 +18,22 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class TodoListActivity extends AppCompatActivity {
 
-    private String name;
+    private String listTitle;
     private Button saveButton, kaydetButton, iptalButton;
     private EditText listName, listItem;
     private LinearLayout checkBoxContainer;
@@ -33,8 +42,10 @@ public class TodoListActivity extends AppCompatActivity {
     private CheckBox checkbox;
     private TodoModel todoModel;
     private ListView listView;
-    private List<TodoModel> modelList;
+    private List<HashMap<String,String>> modelList;
+    private List<String> modelListJsonFormat;
     private TodoDb db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +65,9 @@ public class TodoListActivity extends AppCompatActivity {
             }
         });
 
-        db= new TodoDb(getApplicationContext());
-        modelList = new ArrayList<TodoModel>();
+        db = new TodoDb(getApplicationContext());
+        modelList = new ArrayList<HashMap<String, String>>();
+        modelListJsonFormat = new ArrayList<String>();
 
 
     }
@@ -82,9 +94,7 @@ public class TodoListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-
                 if (!listName.getText().toString().equals("")) {
-                    name = listName.getText().toString();
                     if (!listItem.getText().toString().equals("")) {
                         checkbox = new CheckBox(TodoListActivity.this);
                         checkbox.setText(listItem.getText().toString());
@@ -94,7 +104,33 @@ public class TodoListActivity extends AppCompatActivity {
                         } else {
                             checked = "false";
                         }
-                        todoModel = new TodoModel(name, listItem.getText().toString(), checked);
+
+                        Object list[] = new String[2];
+                        list[0] = listItem.getText().toString();
+                        list[1] = checked;
+
+
+
+
+
+                     todoModel = new TodoModel(listItem.getText().toString(),checked);
+//
+
+                        JSONObject json = new JSONObject();
+                        try {
+                            listTitle = listName.getText().toString();
+                            json.put("ItemName",todoModel.getListItemsName());
+                            json.put("Checked",todoModel.getChecked());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        String arrayList = json.toString();
+                        modelListJsonFormat.add(arrayList);
+
+
                         listItem.setText("");
 
                     } else {
@@ -118,18 +154,25 @@ public class TodoListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 TodoDb db = new TodoDb(TodoListActivity.this);
-                long id = db.kayitEkle(todoModel);
-                if (id == -1) {
-                    Toast.makeText(getApplicationContext(), "Kayıt Sırasında Bir Hata Oluştu", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Kayıt İşlemi Başarılı", Toast.LENGTH_LONG).show();
-                }
+
+                String gson = new Gson().toJson(modelListJsonFormat);
+
+                System.out.println(gson);
+
+                    long id = db.kayitEkle(listTitle,gson);
+                    if(id != -1)
+                        Toast.makeText(getApplicationContext(),"kaydedildi",Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getApplicationContext(),"kaydedilmedi",Toast.LENGTH_SHORT).show();
+
                 dialog.dismiss();
+                Listele();
 
 
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -141,8 +184,9 @@ public class TodoListActivity extends AppCompatActivity {
     }
 
     private void Listele() {
+
         modelList = db.tumKayitlariGetir();
-        TodoListAdapter adapter=new TodoListAdapter(getApplicationContext(),modelList);
+        TodoListAdapter adapter = new TodoListAdapter(getApplicationContext(), modelList);
         listView.setAdapter(adapter);
 
 
