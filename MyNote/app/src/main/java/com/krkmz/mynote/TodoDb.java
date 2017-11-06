@@ -46,13 +46,10 @@ public class TodoDb  extends SQLiteOpenHelper {
     }
     public long kayitEkle(String ListTitle, String todoModel) {
 
-
-
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(TITLE,ListTitle);
+        cv.put(TITLE,ListTitle.toString());
         cv.put(ITEM,todoModel.toString());
-
 
         long id = db.insert(TABLE_NAME, null, cv);
         db.close();
@@ -61,7 +58,7 @@ public class TodoDb  extends SQLiteOpenHelper {
     }
 
 
-    public List<HashMap<String,String>> tumKayitlariGetir() {
+    public List<TodoModel> tumKayitlariGetir() {
 
         SQLiteDatabase db = this.getReadableDatabase();
         String[] sutunlar = new String[]{TITLE,ITEM};
@@ -70,23 +67,35 @@ public class TodoDb  extends SQLiteOpenHelper {
         int titleNo = c.getColumnIndex(TITLE);
         int itemNameNo = c.getColumnIndex(ITEM);
 
-        ArrayList<HashMap<String,String>> arrayList = new ArrayList<HashMap<String, String>>();
+        List<TodoModel> modelList = new ArrayList<TodoModel>();
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 
-            String titleName = c.getString(titleNo);
-            String Items = c.getString(itemNameNo);
-            HashMap<String,String> hashMap = new HashMap<String, String>();
+            TodoModel todoModel = new TodoModel();
+            todoModel.setListItemsName(c.getString(titleNo));
+            todoModel.setChecked(c.getString(itemNameNo));
 
-            hashMap.put("titleName",titleName);
-            hashMap.put("Item",Items);
-
-            arrayList.add(hashMap);
+            modelList.add(todoModel);
 
         }
         db.close();
-        return arrayList;
+        return modelList;
 
     }
+
+    public void Guncelle(TodoModel model) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TITLE, model.getListItemsName());
+        cv.put(ITEM, model.getChecked());
+
+
+
+        db.update(TABLE_NAME, cv, ID + "=" + model.getId(), null);
+        db.close();
+    }
+
+
     public void Sil() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, null, null);

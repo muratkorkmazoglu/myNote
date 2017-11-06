@@ -6,8 +6,17 @@ public class TodoModel {
 
     private String listItemsName;
     private String checked;
+    private int Id;
 
     public TodoModel(){}
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
 
     public TodoModel(String listItemsName, String checked) {
 

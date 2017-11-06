@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -42,8 +43,9 @@ public class TodoListActivity extends AppCompatActivity {
     private CheckBox checkbox;
     private TodoModel todoModel;
     private ListView listView;
-    private List<HashMap<String,String>> modelList;
+    private List<TodoModel> modelList;
     private List<String> modelListJsonFormat;
+    private List<String> modelListJsonFormatUpdate;
     private TodoDb db;
 
 
@@ -66,8 +68,9 @@ public class TodoListActivity extends AppCompatActivity {
         });
 
         db = new TodoDb(getApplicationContext());
-        modelList = new ArrayList<HashMap<String, String>>();
+        modelList = new ArrayList<TodoModel>();
         modelListJsonFormat = new ArrayList<String>();
+        modelListJsonFormatUpdate = new ArrayList<String>();
 
 
     }
@@ -98,34 +101,24 @@ public class TodoListActivity extends AppCompatActivity {
                     if (!listItem.getText().toString().equals("")) {
                         checkbox = new CheckBox(TodoListActivity.this);
                         checkbox.setText(listItem.getText().toString());
-                        checkBoxContainer.addView(checkbox);
+
                         if (checkbox.isChecked()) {
                             checked = "true";
                         } else {
                             checked = "false";
                         }
+                        checkBoxContainer.addView(checkbox);
 
-                        Object list[] = new String[2];
-                        list[0] = listItem.getText().toString();
-                        list[1] = checked;
-
-
-
-
-
-                     todoModel = new TodoModel(listItem.getText().toString(),checked);
-//
+                        todoModel = new TodoModel(listItem.getText().toString(), checked);
 
                         JSONObject json = new JSONObject();
                         try {
                             listTitle = listName.getText().toString();
-                            json.put("ItemName",todoModel.getListItemsName());
-                            json.put("Checked",todoModel.getChecked());
+                            json.put("ItemName", todoModel.getListItemsName());
+                            json.put("Checked", todoModel.getChecked());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
 
                         String arrayList = json.toString();
                         modelListJsonFormat.add(arrayList);
@@ -155,15 +148,22 @@ public class TodoListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 TodoDb db = new TodoDb(TodoListActivity.this);
 
-                String gson = new Gson().toJson(modelListJsonFormat);
+                JSONObject json = new JSONObject();
+                for (int i = 0; i < modelListJsonFormat.size(); i++) {
+                    try {
+                        json.put("Item" + i, modelListJsonFormat.get(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String arrayList = json.toString();
+                System.out.println(arrayList.toString());
 
-                System.out.println(gson);
-
-                    long id = db.kayitEkle(listTitle,gson);
-                    if(id != -1)
-                        Toast.makeText(getApplicationContext(),"kaydedildi",Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(getApplicationContext(),"kaydedilmedi",Toast.LENGTH_SHORT).show();
+                long id = db.kayitEkle(listTitle, arrayList);
+                if (id != -1)
+                    Toast.makeText(getApplicationContext(), "kaydedildi", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getApplicationContext(), "kaydedilmedi", Toast.LENGTH_SHORT).show();
 
                 dialog.dismiss();
                 Listele();
@@ -186,11 +186,105 @@ public class TodoListActivity extends AppCompatActivity {
     private void Listele() {
 
         modelList = db.tumKayitlariGetir();
+        //db.Sil();
         TodoListAdapter adapter = new TodoListAdapter(getApplicationContext(), modelList);
         listView.setAdapter(adapter);
 
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                JSONObject json = null;
+                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                View layout = inflater.inflate(R.layout.todo_dialog, null);
+                saveButton = (Button) layout.findViewById(R.id.saveButtonList);
+                kaydetButton = (Button) layout.findViewById(R.id.kaydet);
+                iptalButton = (Button) layout.findViewById(R.id.iptal);
+                listName = (EditText) layout.findViewById(R.id.etTitleList);
+                listItem = (EditText) layout.findViewById(R.id.etListItem);
+                checkBoxContainer = (LinearLayout) layout.findViewById(R.id.checkboxContainer);
+                AlertDialog.Builder builder = new AlertDialog.Builder(TodoListActivity.this);
+                builder.setTitle("MyList");
+                builder.setView(layout);
+
+                listName.setText(modelList.get(i).getListItemsName().toString());
+
+                try {
+                    json = new JSONObject(modelList.get(i).getChecked());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                for (int k = 0; k < json.length(); k++) {
+                    try {
+
+                        JSONObject isim = new JSONObject(json.getString("Item" + k));
+                        String myIsım = isim.getString("ItemName");
+                        String isChecked = isim.getString("Checked");
+                        System.out.println(isChecked);
+                        checkbox = new CheckBox(TodoListActivity.this);
+                        checkbox.setText(myIsım.toString());
+                        checkbox.setId(k);
+                        checkBoxContainer.addView(checkbox);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                dialog = builder.create();
+                dialog.show();
+
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (!listName.getText().toString().equals("")) {
+                            if (!listItem.getText().toString().equals("")) {
+                                checkbox = new CheckBox(TodoListActivity.this);
+                                checkbox.setText(listItem.getText().toString());
+
+                                if (checkbox.isChecked()) {
+                                    checked = "true";
+                                } else {
+                                    checked = "false";
+                                }
+                                checkBoxContainer.addView(checkbox);
+
+//                                todoModel = new TodoModel(listItem.getText().toString(), checked);
+//
+//                                JSONObject json = new JSONObject();
+//                                try {
+//                                    listTitle = listName.getText().toString();
+//                                    json.put("ItemName", todoModel.getListItemsName());
+//                                    json.put("Checked", todoModel.getChecked());
+//                                } catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                                String arrayList = json.toString();
+//                                modelListJsonFormat.add(arrayList);
+
+
+                                listItem.setText("");
+
+                            } else {
+
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Liste Adı Boş Geçilemez", Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                });
+
+            }
+
+
+        });
     }
-
-
 }
