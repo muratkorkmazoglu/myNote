@@ -132,6 +132,7 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public List<NoteModel> getTheme(String theme) {
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + THEME + " = ? ", new String[]{theme});

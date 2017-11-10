@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         searchImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ıntent = new Intent(getApplicationContext(), TodoListActivity.class);
+                Intent ıntent = new Intent(getApplicationContext(), TodoActivity.class);
                 startActivity(ıntent);
             }
         });
