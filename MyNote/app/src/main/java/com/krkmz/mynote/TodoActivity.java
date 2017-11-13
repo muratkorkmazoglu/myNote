@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class TodoActivity extends Activity {
 
@@ -35,118 +37,118 @@ public class TodoActivity extends Activity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //db.deleteAll();
                 showMyDialog();
-
             }
         });
 
-
-        // Creating tags
-        Tag tag1 = new Tag("Shopping");
-        Tag tag2 = new Tag("Important");
-        Tag tag3 = new Tag("Watchlist");
-        Tag tag4 = new Tag("Androidhive");
-
-        // Inserting tags in db
-        long tag1_id = db.createTag(tag1);
-        long tag2_id = db.createTag(tag2);
-        long tag3_id = db.createTag(tag3);
-        long tag4_id = db.createTag(tag4);
-
-        Log.d("Tag Count", "Tag Count: " + db.getAllTags().size());
-
-        // Creating ToDos
-        Todo todo1 = new Todo("iPhone 5S", 0);
-        Todo todo2 = new Todo("Galaxy Note II", 0);
-        Todo todo3 = new Todo("Whiteboard", 0);
-
-        Todo todo4 = new Todo("Riddick", 0);
-        Todo todo5 = new Todo("Prisoners", 0);
-        Todo todo6 = new Todo("The Croods", 0);
-        Todo todo7 = new Todo("Insidious: Chapter 2", 0);
-
-        Todo todo8 = new Todo("Don't forget to call MOM", 0);
-        Todo todo9 = new Todo("Collect money from John", 0);
-
-        Todo todo10 = new Todo("Post new Article", 0);
-        Todo todo11 = new Todo("Take database backup", 0);
-
-        // Inserting todos in db
-        // Inserting todos under "Shopping" Tag
-        long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
-        long todo2_id = db.createToDo(todo2, new long[]{tag1_id});
-        long todo3_id = db.createToDo(todo3, new long[]{tag1_id});
-
-        // Inserting todos under "Watchlist" Tag
-        long todo4_id = db.createToDo(todo4, new long[]{tag3_id});
-        long todo5_id = db.createToDo(todo5, new long[]{tag3_id});
-        long todo6_id = db.createToDo(todo6, new long[]{tag3_id});
-        long todo7_id = db.createToDo(todo7, new long[]{tag3_id});
-
-        // Inserting todos under "Important" Tag
-        long todo8_id = db.createToDo(todo8, new long[]{tag2_id});
-        long todo9_id = db.createToDo(todo9, new long[]{tag2_id});
-
-        // Inserting todos under "Androidhive" Tag
-        long todo10_id = db.createToDo(todo10, new long[]{tag4_id});
-        long todo11_id = db.createToDo(todo11, new long[]{tag4_id});
-
-        Log.e("Todo Count", "Todo count: " + db.getToDoCount());
-
-        // "Post new Article" - assigning this under "Important" Tag
-        // Now this will have - "Androidhive" and "Important" Tags
-        db.createTodoTag(todo10_id, tag2_id);
-
-        // Getting all tag names
-        Log.d("Get Tags", "Getting All Tags");
-
-        List<Tag> allTags = db.getAllTags();
-        for (Tag tag : allTags) {
-            Log.d("Tag Name", tag.getTagName());
-        }
-
-        // Getting all Todos
-        Log.d("Get Todos", "Getting All ToDos");
-
-        List<Todo> allToDos = db.getAllToDos();
-        for (Todo todo : allToDos) {
-            Log.d("ToDo", todo.getNote());
-        }
-
-        // Getting todos under "Watchlist" tag name
-        Log.d("ToDo", "Get todos under single Tag name");
-
-        List<Todo> tagsWatchList = db.getAllToDosByTag(tag3.getTagName());
-        for (Todo todo : tagsWatchList) {
-            Log.d("ToDo Watchlist", todo.getNote());
-        }
-
-        // Deleting a ToDo
-        Log.d("Delete ToDo", "Deleting a Todo");
-        Log.d("Tag Count", "Tag Count Before Deleting: " + db.getToDoCount());
-
-        db.deleteToDo(todo8_id);
-
-        Log.d("Tag Count", "Tag Count After Deleting: " + db.getToDoCount());
-
-        // Deleting all Todos under "Shopping" tag
-        Log.d("Tag Count",
-                "Tag Count Before Deleting 'Shopping' Todos: "
-                        + db.getToDoCount());
-
-        db.deleteTag(tag1, true);
-
-        Log.d("Tag Count",
-                "Tag Count After Deleting 'Shopping' Todos: "
-                        + db.getToDoCount());
-
-        // Updating tag name
-        tag3.setTagName("Movies to watch");
-        db.updateTag(tag3);
-
-        // Don't forget to close database connection
-        db.closeDB();
+//        // Creating tags
+//        Tag tag1 = new Tag("Shopping");
+//        Tag tag2 = new Tag("Important");
+//        Tag tag3 = new Tag("Watchlist");
+//        Tag tag4 = new Tag("Androidhive");
+//
+//        // Inserting tags in db
+//        long tag1_id = db.createTag(tag1);
+//        Log.d("Tag ID", "Tag ID: " + tag1_id);
+//        Log.d("Tag ID", "Tag ID: " + tag1.getId());
+//        long tag2_id = db.createTag(tag2);
+//        long tag3_id = db.createTag(tag3);
+//        long tag4_id = db.createTag(tag4);
+//
+//        Log.d("Tag Count", "Tag Count: " + db.getAllTags().size());
+//
+//        // Creating ToDos
+//        Todo todo1 = new Todo("iPhone 5S", 0);
+//        Todo todo2 = new Todo("Galaxy Note II", 0);
+//        Todo todo3 = new Todo("Whiteboard", 0);
+//
+//        Todo todo4 = new Todo("Riddick", 0);
+//        Todo todo5 = new Todo("Prisoners", 0);
+//        Todo todo6 = new Todo("The Croods", 0);
+//        Todo todo7 = new Todo("Insidious: Chapter 2", 0);
+//
+//        Todo todo8 = new Todo("Don't forget to call MOM", 0);
+//        Todo todo9 = new Todo("Collect money from John", 0);
+//
+//        Todo todo10 = new Todo("Post new Article", 0);
+//        Todo todo11 = new Todo("Take database backup", 0);
+//
+//        // Inserting todos in db
+//        // Inserting todos under "Shopping" Tag
+//        long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
+//        long todo2_id = db.createToDo(todo2, new long[]{tag1_id});
+//        long todo3_id = db.createToDo(todo3, new long[]{tag1_id});
+//
+//        // Inserting todos under "Watchlist" Tag
+//        long todo4_id = db.createToDo(todo4, new long[]{tag3_id});
+//        long todo5_id = db.createToDo(todo5, new long[]{tag3_id});
+//        long todo6_id = db.createToDo(todo6, new long[]{tag3_id});
+//        long todo7_id = db.createToDo(todo7, new long[]{tag3_id});
+//
+//        // Inserting todos under "Important" Tag
+//        long todo8_id = db.createToDo(todo8, new long[]{tag2_id});
+//        long todo9_id = db.createToDo(todo9, new long[]{tag2_id});
+//
+//        // Inserting todos under "Androidhive" Tag
+//        long todo10_id = db.createToDo(todo10, new long[]{tag4_id});
+//        long todo11_id = db.createToDo(todo11, new long[]{tag4_id});
+//
+//        Log.e("Todo Count", "Todo count: " + db.getToDoCount());
+//
+//        // "Post new Article" - assigning this under "Important" Tag
+//        // Now this will have - "Androidhive" and "Important" Tags
+//        db.createTodoTag(todo10_id, tag2_id);
+//
+//        // Getting all tag names
+//        Log.d("Get Tags", "Getting All Tags");
+//
+//        List<Tag> allTags = db.getAllTags();
+//        for (Tag tag : allTags) {
+//            Log.d("Tag Name", tag.getTagName());
+//        }
+//
+//        // Getting all Todos
+//        Log.d("Get Todos", "Getting All ToDos");
+//
+//        List<Todo> allToDos = db.getAllToDos();
+//        for (Todo todo : allToDos) {
+//            Log.d("ToDo", todo.getNote());
+//        }
+//
+//        // Getting todos under "Watchlist" tag name
+//        Log.d("ToDo", "Get todos under single Tag name");
+//
+//        List<Todo> tagsWatchList = db.getAllToDosByTag(tag3.getTagName());
+//        for (Todo todo : tagsWatchList) {
+//            Log.d("ToDo Watchlist", todo.getNote());
+//        }
+//
+//        // Deleting a ToDo
+//        Log.d("Delete ToDo", "Deleting a Todo");
+//        Log.d("Tag Count", "Tag Count Before Deleting: " + db.getToDoCount());
+//
+//        db.deleteToDo(todo8_id);
+//
+//        Log.d("Tag Count", "Tag Count After Deleting: " + db.getToDoCount());
+//
+//        // Deleting all Todos under "Shopping" tag
+//        Log.d("Tag Count",
+//                "Tag Count Before Deleting 'Shopping' Todos: "
+//                        + db.getToDoCount());
+//
+//        db.deleteTag(tag1, true);
+//
+//        Log.d("Tag Count",
+//                "Tag Count After Deleting 'Shopping' Todos: "
+//                        + db.getToDoCount());
+//
+//        // Updating tag name
+//        tag3.setTagName("Movies to watch");
+//        db.updateTag(tag3);
+//
+//        // Don't forget to close database connection
+//        db.closeDB();
     }
 
     private void showMyDialog() {
@@ -154,7 +156,7 @@ public class TodoActivity extends Activity {
         LayoutInflater inflater = LayoutInflater.from(this);
         View layout = inflater.inflate(R.layout.todo_dialog, null);
 
-        saveButton = (Button) layout.findViewById(R.id.saveButtonList);
+        saveButton = (Button) layout.findViewById(R.id.addButton);
         kaydetButton = (Button) layout.findViewById(R.id.kaydet);
         iptalButton = (Button) layout.findViewById(R.id.iptal);
         listName = (EditText) layout.findViewById(R.id.etTitleList);
@@ -171,6 +173,21 @@ public class TodoActivity extends Activity {
             @Override
             public void onClick(View view) {
 
+                if (!listName.getText().toString().equals("")) {
+                    if (!listItem.getText().toString().equals("")) {
+
+                        CheckBox checkbox = new CheckBox(TodoActivity.this);
+                        checkbox.setText(listItem.getText().toString());
+                        checkbox.setChecked(true);
+                        checkBoxContainer.addView(checkbox);
+                        listItem.setText("");
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Liste Elemanı Ekleyiniz", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Liste Adı Boş Geçilemez", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
@@ -185,12 +202,76 @@ public class TodoActivity extends Activity {
         });
 
         kaydetButton.setOnClickListener(new View.OnClickListener() {
+            CheckBox v;
+
             @Override
             public void onClick(View view) {
 
-            }
+                List<Tag> allTags = db.getAllTags();
+                for (Tag tag : allTags) {
+                    if (tag.getTagName().equals(listName.getText().toString())) {
+                        Toast.makeText(getApplicationContext(), "Bu Liste Adı Kullanılıyor. Lütfen Başka Bir Liste Adı Ekleyiniz", Toast.LENGTH_LONG).show();
+                    }
+                }
+                Tag tag1 = new Tag(listName.getText().toString());
+                long tag1_id = db.createTag(tag1);
 
+                for (int i = 0; i < checkBoxContainer.getChildCount(); i++) {
+                    v = (CheckBox) checkBoxContainer.getChildAt(i);
+                    Todo todo1 = new Todo(v.getText().toString(), 0);
+                    long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
+                    Toast.makeText(getApplicationContext(), "Liste Kaydedildi", Toast.LENGTH_LONG).show();
+
+                }
+                dialog.dismiss();
+            }
         });
     }
+
+//    public void readText() {
+//
+//        String text = "yaz: 1 a 1 \b 3 k 1 \n 6 u ";
+//        String[] parts = text.split(" ");
+//
+//        String[] endText;
+//        int arraycount = 0;
+//        int textCount = 0;
+//        String yazi;
+//
+//        if (parts[0].equals("yaz:")) {
+//            for (int i = 1; i < parts.length; i++) {
+//                if (i % 2 == 1) {
+//                    arraycount += Integer.parseInt(parts[i]);
+//                }
+//            }
+//            endText = new String[arraycount];
+//
+//            int index = 0;
+//            for (int i = 1; i < parts.length; i++) {
+//                if (i % 2 == 1) {
+//                    textCount = Integer.parseInt(parts[i]);
+//                } else {
+//                    yazi = parts[i];
+//                    for (int j = 0; j < textCount; j++) {
+//                        endText[index] = yazi;
+//                        index++;
+//                    }
+//                }
+//            }
+//
+//        } else {
+//            endText = new String[0];
+//        }
+//
+//        for (int i = 0; i < endText.length; i++) {
+//
+//            if (endText[i].equals("\n"))
+//                System.out.println();
+//            else if (endText[i].equals("\b"))
+//                System.out.print(" ");
+//            System.out.print(endText[i]);
+//        }
+//    }
+
 
 }

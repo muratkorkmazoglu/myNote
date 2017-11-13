@@ -37,7 +37,7 @@
             android:paddingTop="2dp" />
 
         <Button
-            android:id="@+id/saveButtonList"
+            android:id="@+id/addButton"
             android:layout_width="80dp"
             android:layout_height="29dp"
             android:layout_marginRight="8dp"

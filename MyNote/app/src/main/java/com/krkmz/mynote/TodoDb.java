@@ -137,7 +137,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
     /**
      * getting all todos
-     * */
+     */
     public List<Todo> getAllToDos() {
         List<Todo> todos = new ArrayList<Todo>();
         String selectQuery = "SELECT  * FROM " + TABLE_TODO;
@@ -165,7 +165,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
     /**
      * getting all todos under single tag
-     * */
+     */
     public List<Todo> getAllToDosByTag(String tag_name) {
         List<Todo> todos = new ArrayList<Todo>();
 
@@ -223,7 +223,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_TODO, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(todo.getId()) });
+                new String[]{String.valueOf(todo.getId())});
     }
 
     /**
@@ -232,7 +232,7 @@ public class TodoDb extends SQLiteOpenHelper {
     public void deleteToDo(long tado_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TODO, KEY_ID + " = ?",
-                new String[] { String.valueOf(tado_id) });
+                new String[]{String.valueOf(tado_id)});
     }
 
     // ------------------------ "tags" table methods ----------------//
@@ -255,7 +255,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
     /**
      * getting all tags
-     * */
+     */
     public List<Tag> getAllTags() {
         List<Tag> tags = new ArrayList<Tag>();
         String selectQuery = "SELECT  * FROM " + TABLE_TAG;
@@ -290,7 +290,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_TAG, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(tag.getId()) });
+                new String[]{String.valueOf(tag.getId())});
     }
 
     /**
@@ -314,7 +314,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
         // now delete the tag
         db.delete(TABLE_TAG, KEY_ID + " = ?",
-                new String[] { String.valueOf(tag.getId()) });
+                new String[]{String.valueOf(tag.getId())});
     }
 
     // ------------------------ "todo_tags" table methods ----------------//
@@ -346,7 +346,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_TODO, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
     }
 
     /**
@@ -355,7 +355,7 @@ public class TodoDb extends SQLiteOpenHelper {
     public void deleteToDoTag(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TODO, KEY_ID + " = ?",
-                new String[] { String.valueOf(id) });
+                new String[]{String.valueOf(id)});
     }
 
     // closing database
@@ -367,11 +367,19 @@ public class TodoDb extends SQLiteOpenHelper {
 
     /**
      * get datetime
-     * */
+     */
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TAG, null, null);
+        db.delete(TABLE_TODO, null, null);
+        db.delete(TABLE_TODO_TAG, null, null);
+        db.close();
     }
 }
