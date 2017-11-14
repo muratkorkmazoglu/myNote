@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/etTitleList"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="Liste Başlığı"
+        android:inputType="textPersonName"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="2dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etListItem"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:layout_weight="2"
+            android:background="@drawable/edit_text"
+            android:hint="Yeni Eleman"
+            android:inputType="textPersonName"
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="2dp" />
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="80dp"
+            android:layout_height="29dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/buttonshape"
+            android:padding="1dp"
+            android:text="Ekle" />
+
+    </LinearLayout>
+
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="8dp"
+        android:background="#FFF">
+
+        <LinearLayout
+            android:id="@+id/checkboxContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/todoUpdateListview">
+
+            </ListView>
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttonshape"
+            android:text="Güncelle" />
+
+        <Button
+            android:id="@+id/iptal"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttonshape"
+            android:text="İptal" />
+    </LinearLayout>
+
+</LinearLayout>

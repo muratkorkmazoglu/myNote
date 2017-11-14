@@ -1,39 +1,57 @@
 package com.krkmz.mynote;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class TodoActivity extends Activity {
+public class TodoActivity extends AppCompatActivity {
 
     TodoDb db;
     FloatingActionButton fab;
-    private Button saveButton, kaydetButton, iptalButton;
+    private Button saveButton, kaydetButton, iptalButton, updateButton;
     private EditText listName, listItem;
     private LinearLayout checkBoxContainer;
     private AlertDialog dialog;
+    private ListView listView, todoListview;
+    private List<Tag> tagList;
+    private View layout;
+    private List<Todo> todoCountByTag;
+    private LayoutInflater inflater;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.todo_list_layout);
         db = new TodoDb(getApplicationContext());
-
-        fab = findViewById(R.id.fab_todo);
+        listView = (ListView) findViewById(R.id.listViewTodo);
+        fab = (FloatingActionButton) findViewById(R.id.fab_todo);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -41,6 +59,10 @@ public class TodoActivity extends Activity {
                 showMyDialog();
             }
         });
+
+
+        inflater = LayoutInflater.from(this);
+
 
 //        // Creating tags
 //        Tag tag1 = new Tag("Shopping");
@@ -151,10 +173,52 @@ public class TodoActivity extends Activity {
 //        db.closeDB();
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_todo, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.deleteAllTodo) {
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
+            builder.setTitle("Tüm Kayıtlar Silinecek");
+            builder.setMessage("Emin Misiniz ?");
+            builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+
+            builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id1) {
+                    Log.d("EVETTT", "EVETTT");
+
+                    db.deleteAll();
+                    Listele();
+                    Toast.makeText(getApplicationContext(), "Tüm Kayıtlar Silindi!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            builder.show();
+
+            return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void showMyDialog() {
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View layout = inflater.inflate(R.layout.todo_dialog, null);
+        layout = inflater.inflate(R.layout.todo_dialog, null);
 
         saveButton = (Button) layout.findViewById(R.id.addButton);
         kaydetButton = (Button) layout.findViewById(R.id.kaydet);
@@ -189,7 +253,6 @@ public class TodoActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "Liste Adı Boş Geçilemez", Toast.LENGTH_SHORT).show();
                 }
             }
-
         });
 
         iptalButton.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +273,7 @@ public class TodoActivity extends Activity {
                 List<Tag> allTags = db.getAllTags();
                 for (Tag tag : allTags) {
                     if (tag.getTagName().equals(listName.getText().toString())) {
-                        Toast.makeText(getApplicationContext(), "Bu Liste Adı Kullanılıyor. Lütfen Başka Bir Liste Adı Ekleyiniz", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Bu Liste Adı Kullanılıyor. Lütfen Başka Bir Liste Adı Ekleyiniz", Toast.LENGTH_SHORT).show();
                     }
                 }
                 Tag tag1 = new Tag(listName.getText().toString());
@@ -220,58 +283,64 @@ public class TodoActivity extends Activity {
                     v = (CheckBox) checkBoxContainer.getChildAt(i);
                     Todo todo1 = new Todo(v.getText().toString(), 0);
                     long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
-                    Toast.makeText(getApplicationContext(), "Liste Kaydedildi", Toast.LENGTH_LONG).show();
-
+                    Listele();
                 }
+                Toast.makeText(getApplicationContext(), "Liste Kaydedildi", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
     }
 
-//    public void readText() {
-//
-//        String text = "yaz: 1 a 1 \b 3 k 1 \n 6 u ";
-//        String[] parts = text.split(" ");
-//
-//        String[] endText;
-//        int arraycount = 0;
-//        int textCount = 0;
-//        String yazi;
-//
-//        if (parts[0].equals("yaz:")) {
-//            for (int i = 1; i < parts.length; i++) {
-//                if (i % 2 == 1) {
-//                    arraycount += Integer.parseInt(parts[i]);
-//                }
-//            }
-//            endText = new String[arraycount];
-//
-//            int index = 0;
-//            for (int i = 1; i < parts.length; i++) {
-//                if (i % 2 == 1) {
-//                    textCount = Integer.parseInt(parts[i]);
-//                } else {
-//                    yazi = parts[i];
-//                    for (int j = 0; j < textCount; j++) {
-//                        endText[index] = yazi;
-//                        index++;
-//                    }
-//                }
-//            }
-//
-//        } else {
-//            endText = new String[0];
-//        }
-//
-//        for (int i = 0; i < endText.length; i++) {
-//
-//            if (endText[i].equals("\n"))
-//                System.out.println();
-//            else if (endText[i].equals("\b"))
-//                System.out.print(" ");
-//            System.out.print(endText[i]);
-//        }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Listele();
+    }
+
+    public void Listele() {
 
 
+        tagList = new ArrayList<Tag>();
+        tagList = db.getAllTags();
+        TodoAdapter adapter = new TodoAdapter(getApplicationContext(), tagList);
+        listView.setAdapter(adapter);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
+        builder.setTitle("MyList");
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Tag dataModel = (Tag) adapterView.getItemAtPosition(i);
+                Toast.makeText(getApplicationContext(), dataModel.getTagName().toString(), Toast.LENGTH_SHORT).show();
+
+                layout = inflater.inflate(R.layout.todo_update_dialog, null);
+                saveButton = (Button) layout.findViewById(R.id.addButton);
+                updateButton = (Button) layout.findViewById(R.id.updateButton);
+                iptalButton = (Button) layout.findViewById(R.id.iptal);
+                listName = (EditText) layout.findViewById(R.id.etTitleList);
+                listItem = (EditText) layout.findViewById(R.id.etListItem);
+                todoListview = (ListView) layout.findViewById(R.id.todoUpdateListview);
+
+                todoCountByTag = new ArrayList<Todo>();
+                todoCountByTag = db.getAllToDosByTag(dataModel.getTagName().toString());
+
+                builder.setView(layout);
+                dialog = builder.create();
+
+                TodoUpdateDialogAdapter adapter = new TodoUpdateDialogAdapter(getApplicationContext(), todoCountByTag);
+                todoListview.setAdapter(adapter);
+                listName.setText(dataModel.getTagName().toString());
+
+                dialog.show();
+
+                iptalButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {dialog.dismiss();}});
+
+
+            }
+        });
+    }
 }

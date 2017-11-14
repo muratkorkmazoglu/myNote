@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.krkmz.mynote.MainActivity">
+    <item
+        android:id="@+id/deleteAllTodo"
+        android:orderInCategory="100"
+        android:title="Tüm Kayıtları Sil"
+        app:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_delete"/>
+
+</menu>

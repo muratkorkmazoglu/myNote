@@ -113,6 +113,7 @@ public class TodoDb extends SQLiteOpenHelper {
 
     /**
      * get single todo
+     * get single todo
      */
     public Todo getTodo(long todo_id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -229,10 +230,9 @@ public class TodoDb extends SQLiteOpenHelper {
     /**
      * Deleting a todo
      */
-    public void deleteToDo(long tado_id) {
+    public void deleteToDo(String todo) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TODO, KEY_ID + " = ?",
-                new String[]{String.valueOf(tado_id)});
+        db.delete(TABLE_TODO, KEY_TODO + " = ?", new String[]{todo.toString()});
     }
 
     // ------------------------ "tags" table methods ----------------//
@@ -296,26 +296,26 @@ public class TodoDb extends SQLiteOpenHelper {
     /**
      * Deleting a tag
      */
-    public void deleteTag(Tag tag, boolean should_delete_all_tag_todos) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // before deleting tag
-        // check if todos under this tag should also be deleted
-        if (should_delete_all_tag_todos) {
-            // get all todos under this tag
-            List<Todo> allTagToDos = getAllToDosByTag(tag.getTagName());
-
-            // delete all todos
-            for (Todo todo : allTagToDos) {
-                // delete todo
-                deleteToDo(todo.getId());
-            }
-        }
-
-        // now delete the tag
-        db.delete(TABLE_TAG, KEY_ID + " = ?",
-                new String[]{String.valueOf(tag.getId())});
-    }
+//    public void deleteTag(Tag tag, boolean should_delete_all_tag_todos) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        // before deleting tag
+//        // check if todos under this tag should also be deleted
+//        if (should_delete_all_tag_todos) {
+//            // get all todos under this tag
+//            List<Todo> allTagToDos = getAllToDosByTag(tag.getTagName());
+//
+//            // delete all todos
+//            for (Todo todo : allTagToDos) {
+//                // delete todo
+//                deleteToDo(todo.getId());
+//            }
+//        }
+//
+//        // now delete the tag
+//        db.delete(TABLE_TAG, KEY_ID + " = ?",
+//                new String[]{String.valueOf(tag.getId())});
+//    }
 
     // ------------------------ "todo_tags" table methods ----------------//
 
