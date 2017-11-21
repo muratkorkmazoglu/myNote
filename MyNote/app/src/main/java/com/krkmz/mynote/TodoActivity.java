@@ -4,16 +4,19 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +46,8 @@ public class TodoActivity extends AppCompatActivity {
     private View layout;
     private List<Todo> todoCountByTag;
     private LayoutInflater inflater;
+    private ActionMode actionMode;
+    private Tag dataModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,117 +65,7 @@ public class TodoActivity extends AppCompatActivity {
             }
         });
 
-
         inflater = LayoutInflater.from(this);
-
-
-//        // Creating tags
-//        Tag tag1 = new Tag("Shopping");
-//        Tag tag2 = new Tag("Important");
-//        Tag tag3 = new Tag("Watchlist");
-//        Tag tag4 = new Tag("Androidhive");
-//
-//        // Inserting tags in db
-//        long tag1_id = db.createTag(tag1);
-//        Log.d("Tag ID", "Tag ID: " + tag1_id);
-//        Log.d("Tag ID", "Tag ID: " + tag1.getId());
-//        long tag2_id = db.createTag(tag2);
-//        long tag3_id = db.createTag(tag3);
-//        long tag4_id = db.createTag(tag4);
-//
-//        Log.d("Tag Count", "Tag Count: " + db.getAllTags().size());
-//
-//        // Creating ToDos
-//        Todo todo1 = new Todo("iPhone 5S", 0);
-//        Todo todo2 = new Todo("Galaxy Note II", 0);
-//        Todo todo3 = new Todo("Whiteboard", 0);
-//
-//        Todo todo4 = new Todo("Riddick", 0);
-//        Todo todo5 = new Todo("Prisoners", 0);
-//        Todo todo6 = new Todo("The Croods", 0);
-//        Todo todo7 = new Todo("Insidious: Chapter 2", 0);
-//
-//        Todo todo8 = new Todo("Don't forget to call MOM", 0);
-//        Todo todo9 = new Todo("Collect money from John", 0);
-//
-//        Todo todo10 = new Todo("Post new Article", 0);
-//        Todo todo11 = new Todo("Take database backup", 0);
-//
-//        // Inserting todos in db
-//        // Inserting todos under "Shopping" Tag
-//        long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
-//        long todo2_id = db.createToDo(todo2, new long[]{tag1_id});
-//        long todo3_id = db.createToDo(todo3, new long[]{tag1_id});
-//
-//        // Inserting todos under "Watchlist" Tag
-//        long todo4_id = db.createToDo(todo4, new long[]{tag3_id});
-//        long todo5_id = db.createToDo(todo5, new long[]{tag3_id});
-//        long todo6_id = db.createToDo(todo6, new long[]{tag3_id});
-//        long todo7_id = db.createToDo(todo7, new long[]{tag3_id});
-//
-//        // Inserting todos under "Important" Tag
-//        long todo8_id = db.createToDo(todo8, new long[]{tag2_id});
-//        long todo9_id = db.createToDo(todo9, new long[]{tag2_id});
-//
-//        // Inserting todos under "Androidhive" Tag
-//        long todo10_id = db.createToDo(todo10, new long[]{tag4_id});
-//        long todo11_id = db.createToDo(todo11, new long[]{tag4_id});
-//
-//        Log.e("Todo Count", "Todo count: " + db.getToDoCount());
-//
-//        // "Post new Article" - assigning this under "Important" Tag
-//        // Now this will have - "Androidhive" and "Important" Tags
-//        db.createTodoTag(todo10_id, tag2_id);
-//
-//        // Getting all tag names
-//        Log.d("Get Tags", "Getting All Tags");
-//
-//        List<Tag> allTags = db.getAllTags();
-//        for (Tag tag : allTags) {
-//            Log.d("Tag Name", tag.getTagName());
-//        }
-//
-//        // Getting all Todos
-//        Log.d("Get Todos", "Getting All ToDos");
-//
-//        List<Todo> allToDos = db.getAllToDos();
-//        for (Todo todo : allToDos) {
-//            Log.d("ToDo", todo.getNote());
-//        }
-//
-//        // Getting todos under "Watchlist" tag name
-//        Log.d("ToDo", "Get todos under single Tag name");
-//
-//        List<Todo> tagsWatchList = db.getAllToDosByTag(tag3.getTagName());
-//        for (Todo todo : tagsWatchList) {
-//            Log.d("ToDo Watchlist", todo.getNote());
-//        }
-//
-//        // Deleting a ToDo
-//        Log.d("Delete ToDo", "Deleting a Todo");
-//        Log.d("Tag Count", "Tag Count Before Deleting: " + db.getToDoCount());
-//
-//        db.deleteToDo(todo8_id);
-//
-//        Log.d("Tag Count", "Tag Count After Deleting: " + db.getToDoCount());
-//
-//        // Deleting all Todos under "Shopping" tag
-//        Log.d("Tag Count",
-//                "Tag Count Before Deleting 'Shopping' Todos: "
-//                        + db.getToDoCount());
-//
-//        db.deleteTag(tag1, true);
-//
-//        Log.d("Tag Count",
-//                "Tag Count After Deleting 'Shopping' Todos: "
-//                        + db.getToDoCount());
-//
-//        // Updating tag name
-//        tag3.setTagName("Movies to watch");
-//        db.updateTag(tag3);
-//
-//        // Don't forget to close database connection
-//        db.closeDB();
     }
 
 
@@ -228,7 +123,7 @@ public class TodoActivity extends AppCompatActivity {
         checkBoxContainer = (LinearLayout) layout.findViewById(R.id.checkboxContainer);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
-        builder.setTitle("MyList");
+        builder.setTitle("Yapılacaklar Listesi");
         builder.setView(layout);
         dialog = builder.create();
         dialog.show();
@@ -258,6 +153,7 @@ public class TodoActivity extends AppCompatActivity {
         iptalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Listele();
                 dialog.dismiss();
 
             }
@@ -295,6 +191,7 @@ public class TodoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Listele();
+
     }
 
     public void Listele() {
@@ -302,25 +199,24 @@ public class TodoActivity extends AppCompatActivity {
 
         tagList = new ArrayList<Tag>();
         tagList = db.getAllTags();
+
         TodoAdapter adapter = new TodoAdapter(getApplicationContext(), tagList);
         listView.setAdapter(adapter);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
-        builder.setTitle("MyList");
+        builder.setTitle("Yapılacaklar Listesi");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Tag dataModel = (Tag) adapterView.getItemAtPosition(i);
-                Toast.makeText(getApplicationContext(), dataModel.getTagName().toString(), Toast.LENGTH_SHORT).show();
+                dataModel = (Tag) adapterView.getItemAtPosition(i);
 
-                layout = inflater.inflate(R.layout.todo_update_dialog, null);
-                saveButton = (Button) layout.findViewById(R.id.addButton);
-                updateButton = (Button) layout.findViewById(R.id.updateButton);
-                iptalButton = (Button) layout.findViewById(R.id.iptal);
-                listName = (EditText) layout.findViewById(R.id.etTitleList);
-                listItem = (EditText) layout.findViewById(R.id.etListItem);
+                layout = inflater.inflate(R.layout.todo_dialog_end, null);
+                updateButton = (Button) layout.findViewById(R.id.okButton);
+                TextView etTitle = (TextView) layout.findViewById(R.id.etTitle);
+
+
                 todoListview = (ListView) layout.findViewById(R.id.todoUpdateListview);
 
                 todoCountByTag = new ArrayList<Todo>();
@@ -331,16 +227,94 @@ public class TodoActivity extends AppCompatActivity {
 
                 TodoUpdateDialogAdapter adapter = new TodoUpdateDialogAdapter(getApplicationContext(), todoCountByTag);
                 todoListview.setAdapter(adapter);
-                listName.setText(dataModel.getTagName().toString());
+                etTitle.setText(dataModel.getTagName().toString());
+
 
                 dialog.show();
 
-                iptalButton.setOnClickListener(new View.OnClickListener() {
+                updateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {dialog.dismiss();}});
+                    public void onClick(View view) {
+                        Listele();
+
+                        dialog.dismiss();
+
+
+                    }
+                });
 
 
             }
         });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                dataModel = (Tag) adapterView.getItemAtPosition(i);
+                if (actionMode != null) {
+                    //return;
+                }
+                TodoActivity.ActionModeCallBack callBack = new ActionModeCallBack();
+                actionMode = startSupportActionMode(callBack);
+
+                return true;
+            }
+        });
     }
+
+
+    class ActionModeCallBack implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            getMenuInflater().inflate(R.menu.contex_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+
+                case R.id.delete:
+                    Log.d("TAGTAGTAG-----",dataModel.getTagName().toString());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
+                    builder.setTitle("Kayıt Silinecek");
+                    builder.setMessage("Emin Misiniz ?");
+                    builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            actionMode.finish();
+
+                        }
+                    });
+
+                    builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id1) {
+
+                            TodoDb db = new TodoDb(getApplicationContext());
+                                db.deleteTag(dataModel,true);
+
+                            mode.finish();
+                            Listele();
+                        }
+                    });
+
+                    builder.show();
+                    break;
+            }
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+        }
+    }
+
+
 }

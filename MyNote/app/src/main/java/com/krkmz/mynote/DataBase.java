@@ -91,7 +91,11 @@ public class DataBase extends SQLiteOpenHelper {
             noteModel.setContent(c.getString(contentNo));
             noteModel.setDateTime(c.getInt(dateNo));
             noteModel.setId(c.getInt(idNo));
-            noteModel.setTheme(c.getString(themeNo));
+
+            if (c.getString(themeNo)!=null){
+                noteModel.setTheme(c.getString(themeNo));
+            }
+
 
 
             if (c.getString(directoryNo) != null) {

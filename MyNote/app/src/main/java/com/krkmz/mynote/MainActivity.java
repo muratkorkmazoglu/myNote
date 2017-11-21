@@ -13,6 +13,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,12 +25,33 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
     private ImageView newNote, allNote, tagImage, searchImage;
     String password;
+    private AdView adView;
+    private InterstitialAd gecisReklam;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_layout);
+
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        gecisReklam = new InterstitialAd(this);
+
+        gecisReklam.setAdUnitId("ca-app-pub-3924428861396897/5880807524");
+
+        gecisReklam.loadAd(new AdRequest.Builder().build());
+
+        gecisReklam.setAdListener(new AdListener(){
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                finish();
+            }
+        });
 
         SharedPreferences preferences = getSharedPreferences("PREFS", 0);
         password = preferences.getString("password", "0");
@@ -94,5 +120,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+    public void showInterstitial(){
+        if (gecisReklam.isLoaded()) {
+            gecisReklam.show();
+        } else {
+            finish();
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showInterstitial();
+    }
 }

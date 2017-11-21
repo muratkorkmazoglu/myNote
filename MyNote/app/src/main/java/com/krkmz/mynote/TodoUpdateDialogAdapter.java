@@ -20,13 +20,17 @@ public class TodoUpdateDialogAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private TextView textview;
     private Button button;
+    private View.OnClickListener listener;
 
     public TodoUpdateDialogAdapter(Context context, List<Todo> todoCountByTag) {
         this.context = context;
         this.todoList = todoCountByTag;
         inflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        notifyDataSetChanged();
     }
+
+
 
     @Override
     public int getCount() {
@@ -51,18 +55,16 @@ public class TodoUpdateDialogAdapter extends BaseAdapter {
         textview = view.findViewById(R.id.updateText);
         textview.setText(todoList.get(i).getNote().toString());
         button = view.findViewById(R.id.deleteButton);
+        button.setOnClickListener(listener);
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.deleteToDo(todoList.get(i).getNote().toString());
+                db.deleteToDo(todoList.get(i).getNote());
+                todoList.remove(i);
                 notifyDataSetChanged();
-           
-
-
-//                if (context instanceof TodoActivity) {
-//                    ((TodoActivity) context).Listele();
-//
-//                }
+                
             }
         });
 
