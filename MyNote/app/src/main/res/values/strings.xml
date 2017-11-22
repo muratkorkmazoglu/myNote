@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">My Note</string>
     <string name="action_settings">Settings</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="rate_dialog_message">Bu uygulama hoşunuza gidiyorsa bir dakikanızı ayırıp bize destek olur musunuz ? Bir dakikadan fazla sürmeyecek. Desteğin için teşekkürler!</string>
 </resources>
