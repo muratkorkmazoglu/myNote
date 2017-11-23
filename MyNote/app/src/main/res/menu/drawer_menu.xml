@@ -15,10 +15,6 @@
                     android:title="Oy Ver"
                     android:icon="@mipmap/rate"
                     />
-                <item android:id="@+id/about_us"
-                    android:title="Hakkımızda"
-                    android:icon="@mipmap/about"
-                    />
                 <item android:id="@+id/share"
                     android:title="Paylaş"
                     android:icon="@mipmap/share"

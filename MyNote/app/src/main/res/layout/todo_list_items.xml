@@ -12,7 +12,10 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="@color/siyah"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tagCount"
@@ -22,5 +25,7 @@
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:text="TextView"
-        android:textAlignment="textEnd" />
+        android:textAlignment="textEnd"
+        android:textColor="@color/siyah"
+        android:textSize="16sp" />
 </LinearLayout>

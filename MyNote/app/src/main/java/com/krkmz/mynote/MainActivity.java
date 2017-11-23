@@ -1,8 +1,7 @@
 package com.krkmz.mynote;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,43 +11,40 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import hotchemi.android.rate.AppRate;
 import hotchemi.android.rate.OnClickButtonListener;
 import hotchemi.android.rate.StoreType;
 
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ImageView newNote, allNote, tagImage, searchImage;
-    String password;
+    private String password;
     private AdView adView;
     private InterstitialAd gecisReklam;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar toolbar;
     private NavigationView navView;
+    private LayoutInflater inflater;
+    private View layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,19 +56,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         adView = (AdView) this.findViewById(R.id.adView);
         navView = (NavigationView) findViewById(R.id.nav_view);
+        newNote = (ImageView) findViewById(R.id.newNote);
+        allNote = (ImageView) findViewById(R.id.allNotes);
+        tagImage = (ImageView) findViewById(R.id.tags);
+        searchImage = (ImageView) findViewById(R.id.searchNote);
+
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         navView.setNavigationItemSelectedListener(this);
+        inflater = LayoutInflater.from(this);
 
         AdRequest adRequest = new AdRequest.Builder().build();
+        //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("35CE1B04A529F242D2AA916EB233056F").build();
         adView.loadAd(adRequest);
 
         gecisReklam = new InterstitialAd(this);
         gecisReklam.setAdUnitId("ca-app-pub-3924428861396897/5880807524");
-        gecisReklam.loadAd(new AdRequest.Builder().build());
+
+        gecisReklam.loadAd(adRequest);
         gecisReklam.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
@@ -81,18 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-
         SharedPreferences preferences = getSharedPreferences("PREFS", 0);
         password = preferences.getString("password", "0");
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-        Date resultdate = new Date(System.currentTimeMillis());
-        System.out.println(sdf.format(resultdate));
-
-        newNote = (ImageView) findViewById(R.id.newNote);
-        allNote = (ImageView) findViewById(R.id.allNotes);
-        tagImage = (ImageView) findViewById(R.id.tags);
-        searchImage = (ImageView) findViewById(R.id.searchNote);
 
         newNote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return super.onOptionsItemSelected(item);
         }
     }
+
     public void showInterstitial() {
         if (gecisReklam.isLoaded()) {
             gecisReklam.show();
@@ -192,13 +187,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 AppRate.showRateDialogIfMeetsConditions(MainActivity.this);
                 drawerLayout.closeDrawer(Gravity.LEFT);
 
-
                 break;
             case R.id.contact:
+
+                layout = inflater.inflate(R.layout.contact_dialog, null);
+                final EditText subject, message;
+                subject = layout.findViewById(R.id.subject_text);
+                message = layout.findViewById(R.id.messaje_text);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                dialog.setView(layout);
+                dialog.setTitle("İletişim");
+                dialog.setPositiveButton("Gönder", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        String to = "muratkorkmazoglu@gmail.com";
+                        String sub = subject.getText().toString();
+                        String mesaj = message.getText().toString();
+
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setData(Uri.parse("mailto:"));
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, sub);
+                        intent.putExtra(Intent.EXTRA_TEXT, mesaj);
+
+                        intent.setType("message/rfc822");
+
+                        startActivity(Intent.createChooser(intent, "Lütfen Bir Mail Uygulaması Seçiniz"));
+
+
+                    }
+                });
+                dialog.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                dialog.setCancelable(false);
+                dialog.create().show();
+                drawerLayout.closeDrawer(Gravity.LEFT);
+
 
                 break;
 
             case R.id.share:
+
                 try {
                     Intent i = new Intent(Intent.ACTION_SEND);
                     i.setType("text/plain");
@@ -210,7 +244,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } catch (Exception e) {
                     e.toString();
                 }
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
+
         }
         return true;
     }

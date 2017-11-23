@@ -166,23 +166,29 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                List<Tag> allTags = db.getAllTags();
-                for (Tag tag : allTags) {
-                    if (tag.getTagName().equals(listName.getText().toString())) {
-                        Toast.makeText(getApplicationContext(), "Bu Liste Adı Kullanılıyor. Lütfen Başka Bir Liste Adı Ekleyiniz", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                Tag tag1 = new Tag(listName.getText().toString());
-                long tag1_id = db.createTag(tag1);
+                if (listName.getText().toString().equals("") && checkBoxContainer.getChildCount() == 0) {
 
-                for (int i = 0; i < checkBoxContainer.getChildCount(); i++) {
-                    v = (CheckBox) checkBoxContainer.getChildAt(i);
-                    Todo todo1 = new Todo(v.getText().toString(), 0);
-                    long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
-                    Listele();
+                } else {
+                    List<Tag> allTags = db.getAllTags();
+                    for (Tag tag : allTags) {
+                        if (tag.getTagName().equals(listName.getText().toString())) {
+                            Toast.makeText(getApplicationContext(), "Bu Liste Adı Kullanılıyor. Lütfen Başka Bir Liste Adı Ekleyiniz", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    Tag tag1 = new Tag(listName.getText().toString());
+                    long tag1_id = db.createTag(tag1);
+
+                    for (int i = 0; i < checkBoxContainer.getChildCount(); i++) {
+                        v = (CheckBox) checkBoxContainer.getChildAt(i);
+                        Todo todo1 = new Todo(v.getText().toString(), 0);
+                        long todo1_id = db.createToDo(todo1, new long[]{tag1_id});
+                        Listele();
+                    }
+                    Toast.makeText(getApplicationContext(), "Liste Kaydedildi", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
-                Toast.makeText(getApplicationContext(), "Liste Kaydedildi", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+
+
             }
         });
     }
@@ -281,7 +287,7 @@ public class TodoActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case R.id.delete:
-                    Log.d("TAGTAGTAG-----",dataModel.getTagName().toString());
+                    Log.d("TAGTAGTAG-----", dataModel.getTagName().toString());
                     AlertDialog.Builder builder = new AlertDialog.Builder(TodoActivity.this);
                     builder.setTitle("Kayıt Silinecek");
                     builder.setMessage("Emin Misiniz ?");
@@ -297,7 +303,7 @@ public class TodoActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id1) {
 
                             TodoDb db = new TodoDb(getApplicationContext());
-                                db.deleteTag(dataModel,true);
+                            db.deleteTag(dataModel, true);
 
                             mode.finish();
                             Listele();

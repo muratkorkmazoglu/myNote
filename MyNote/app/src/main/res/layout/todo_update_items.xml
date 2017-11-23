@@ -20,12 +20,14 @@
     <Button
 
         android:id="@+id/deleteButton"
-        android:background="@drawable/buttonshape"
         android:layout_width="120dp"
-        android:layout_margin="5dp"
         android:layout_height="25dp"
+        android:layout_margin="5dp"
         android:layout_weight="1"
+        android:background="@drawable/buttonshape"
         android:text="Sil"
+        android:textAllCaps="false"
+        android:textColor="@color/siyah"
         android:textSize="12sp" />
 
 </LinearLayout>
