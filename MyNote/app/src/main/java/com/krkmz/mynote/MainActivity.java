@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView newNote, allNote, tagImage, searchImage;
     private String password;
     private AdView adView;
-    private InterstitialAd gecisReklam;
+    private InterstitialAd gecisReklam,interstitial;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar toolbar;
@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tagImage = (ImageView) findViewById(R.id.tags);
         searchImage = (ImageView) findViewById(R.id.searchNote);
 
+        SharedPreferences preferences = getSharedPreferences("PREFS", 0);
+        password = preferences.getString("password", "0");
+
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
@@ -69,13 +72,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navView.setNavigationItemSelectedListener(this);
         inflater = LayoutInflater.from(this);
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("35CE1B04A529F242D2AA916EB233056F").build();
+        final AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("35CE1B04A529F242D2AA916EB233056F").build();
         adView.loadAd(adRequest);
+
+        interstitial=new InterstitialAd(MainActivity.this);
+        interstitial.setAdUnitId("ca-app-pub-3924428861396897/5880807524");
 
         gecisReklam = new InterstitialAd(this);
         gecisReklam.setAdUnitId("ca-app-pub-3924428861396897/5880807524");
-
         gecisReklam.loadAd(adRequest);
         gecisReklam.setAdListener(new AdListener() {
             @Override
@@ -85,17 +89,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        SharedPreferences preferences = getSharedPreferences("PREFS", 0);
-        password = preferences.getString("password", "0");
-
         newNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ıntent = new Intent(getApplicationContext(), NoteActivity.class);
-                startActivity(ıntent);
+                interstitial.loadAd(adRequest);
+                interstitial.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        interstitial.show();
+                    }
+                    @Override
+                    public void onAdClosed() {
+                        super.onAdClosed();
+                        Intent ıntent = new Intent(getApplicationContext(), NoteActivity.class);
+                        startActivity(ıntent);
+                    }
+                });
             }
         });
-
         allNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
