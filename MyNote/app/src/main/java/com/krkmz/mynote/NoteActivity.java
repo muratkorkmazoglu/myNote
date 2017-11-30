@@ -56,7 +56,7 @@ public class NoteActivity extends AppCompatActivity {
 
     private EditText etTitle, etContent;
     private ImageView imageView;
-    RelativeLayout tagRl;
+    private RelativeLayout tagRl;
     private NoteModel noteModelIntent;
     private Button saveButton;
     private boolean tiklandi = false;
@@ -135,8 +135,9 @@ public class NoteActivity extends AppCompatActivity {
 
             etTitle.setEnabled(false);
             etContent.setEnabled(false);
-            imageView.setEnabled(false);
+            //imageView.setEnabled(false);
             saveButton.setEnabled(false);
+            saveButton.setVisibility(View.INVISIBLE);
         }
 
         tagRl.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +162,6 @@ public class NoteActivity extends AppCompatActivity {
 
                 final CustomListAdapter adapter = new CustomListAdapter(getApplicationContext(), listArray);
                 listView.setAdapter(adapter);
-
 
                 dialog = new AlertDialog.Builder(NoteActivity.this);
                 dialog.setView(listView);
@@ -264,7 +264,6 @@ public class NoteActivity extends AppCompatActivity {
                 KayıtEkle();
             }
         });
-
     }
 
     private void changeText(int id) {
@@ -320,8 +319,7 @@ public class NoteActivity extends AppCompatActivity {
                 textViewRl.setText("DİĞER");
                 barrow.setImageResource(R.mipmap.turuncu);
                 textViewRl.setTextColor(getResources().getColor(R.color.turuncu));
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
-                        .getColor(R.color.turuncu)));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.turuncu)));
                 mToolbar.setBackgroundColor(getResources().getColor(R.color.turuncu));
                 break;
         }
@@ -433,6 +431,7 @@ public class NoteActivity extends AppCompatActivity {
                 etContent.setEnabled(true);
                 imageView.setEnabled(true);
                 saveButton.setEnabled(true);
+                saveButton.setVisibility(View.VISIBLE);
 
                 MyActionModeCallBack callBack = new MyActionModeCallBack();
                 actionMode = startSupportActionMode(callBack);
@@ -493,7 +492,6 @@ public class NoteActivity extends AppCompatActivity {
 
     public void KayıtEkle() {
 
-
             DataBase db = new DataBase(getApplicationContext());
             if (tiklandi) {
                 guncelle();
@@ -524,11 +522,7 @@ public class NoteActivity extends AppCompatActivity {
                 } else if (etTitle.getText().toString().trim().equals("") && etContent.getText().toString().trim().equals("")) {
                     Toast.makeText(getApplicationContext(), "En az bir değer girmelisiniz ", Toast.LENGTH_LONG).show();
                 }
-
             }
-
-
-
     }
 
     public void saveImage(Context context, Bitmap bitmap, String name) {
@@ -572,22 +566,18 @@ public class NoteActivity extends AppCompatActivity {
                     Uri selectedImage = data.getData();
 
                     try {
-
                         Bitmap myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                         bitmap = rotateImage(myBitmap);
                         imageView.setImageBitmap(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
                 break;
 
             case SELECT_PICTURE:
                 if (resultCode == RESULT_OK && data != null) {
                     picUri = data.getData();
-
-
                     try {
                         Bitmap myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), picUri);
                         bitmap = rotateImage(myBitmap);
@@ -595,8 +585,6 @@ public class NoteActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
                 }
                 break;
         }
@@ -632,8 +620,6 @@ public class NoteActivity extends AppCompatActivity {
                     builder.setMessage("Emin Misiniz ?");
                     builder.setNegativeButton("İPTAL", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-
-
                         }
                     });
 

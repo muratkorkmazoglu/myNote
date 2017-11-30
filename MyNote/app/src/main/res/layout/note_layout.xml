@@ -67,32 +67,19 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-
-          <!--  <android.support.design.widget.TextInputLayout
-                android:id="@+id/usernameWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">-->
-
                 <EditText
                     android:id="@+id/etTitle"
                     android:layout_margin="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:lines="2"
+                    android:maxLines="2"
+                    android:minLines="2"
                     android:padding="8dp"
                     android:hint="Başlık"
                     android:inputType="textPersonName"
                     android:background="@drawable/edit_text"/>
-
-           <!-- </android.support.design.widget.TextInputLayout>-->
-
-
-          <!--  <android.support.design.widget.TextInputLayout
-                android:id="@+id/usernameWrappe"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">-->
 
                 <EditText
                     android:id="@+id/etContent"
@@ -108,22 +95,24 @@
                     android:background="@drawable/edit_text"
                     android:minLines="6" />
 
-            <!--</android.support.design.widget.TextInputLayout>-->
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:paddingBottom="10dp">
 
                 <ImageView
                     android:id="@+id/imgSave"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_toStartOf="@+id/saveButton" />
 
                 <Button
                     android:id="@+id/saveButton"
-                    android:layout_width="120dp"
+                    android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
