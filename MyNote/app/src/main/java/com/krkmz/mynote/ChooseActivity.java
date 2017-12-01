@@ -36,6 +36,8 @@ public class ChooseActivity extends AppCompatActivity {
     private NoteAdapter noteAdapter;
     private DataBase db;
     private String theme;
+    private ArrayList<NoteModel> newList;
+    private Boolean filter = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,8 @@ public class ChooseActivity extends AppCompatActivity {
         });
 
         theme = getIntent().getStringExtra("myTag");
-        if (theme!=null){
-            switch (theme){
+        if (theme != null) {
+            switch (theme) {
                 case "GENEL":
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
                             .getColor(R.color.mavi)));
@@ -104,6 +106,7 @@ public class ChooseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem menuItem = menu.findItem(R.id.menuSearch);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
@@ -118,7 +121,7 @@ public class ChooseActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
 
                 newText = newText.toLowerCase();
-                ArrayList<NoteModel> newList = new ArrayList<>();
+                newList = new ArrayList<>();
                 for (NoteModel noteModel : modelList) {
                     String icerik = noteModel.getContent().toLowerCase();
                     String title = noteModel.getTitle().toLowerCase();
@@ -127,6 +130,10 @@ public class ChooseActivity extends AppCompatActivity {
                     }
                 }
                 noteAdapter.setFilter(newList);
+                if (!newList.isEmpty()){
+                    filter = true;
+                    Listele();
+                }
 
 
                 return true;
@@ -141,7 +148,6 @@ public class ChooseActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.deleteAll) {
-
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ChooseActivity.this);
             builder.setTitle("Tüm Kayıtlar Silinecek");
@@ -169,7 +175,6 @@ public class ChooseActivity extends AppCompatActivity {
             return true;
         }
 
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -186,12 +191,16 @@ public class ChooseActivity extends AppCompatActivity {
 
     public void Listele() {
 
-
-        if (theme != null) {
-            modelList = db.getTheme(theme);
+        if (filter) {
+            modelList = newList;
         } else {
-            modelList = db.tumKayitlariGetir();
+            if (theme != null) {
+                modelList = db.getTheme(theme);
+            } else {
+                modelList = db.tumKayitlariGetir();
+            }
         }
+
 
         noteAdapter = new NoteAdapter(this, modelList, new NoteAdapter.CustomItemClickListener() {
 

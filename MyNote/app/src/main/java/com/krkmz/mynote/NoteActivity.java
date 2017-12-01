@@ -96,7 +96,6 @@ public class NoteActivity extends AppCompatActivity {
         saveButton = (Button) findViewById(R.id.saveButton);
         getSupportActionBar().setElevation(0);
 
-
         changeText(1);
 
         if (noteModelIntent != null) {

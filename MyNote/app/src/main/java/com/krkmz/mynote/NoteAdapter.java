@@ -22,9 +22,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
 
     public void setFilter(ArrayList<NoteModel> filter) {
-        modelList = new ArrayList<>();
-        modelList.addAll(filter);
-        notifyDataSetChanged();
+        this.filter = filter;
+        modelList = new ArrayList<NoteModel>();
+        if (this.filter != null) {
+            Log.d("LOGGGGGG", "LOGGGGG------");
+            modelList.addAll(filter);
+            notifyDataSetChanged();
+        } else {
+            Log.d("ELSE", "ELSEEE------");
+            modelList = new ArrayList<NoteModel>();
+        }
+
     }
 
     public interface CustomItemClickListener {
@@ -41,6 +49,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     private CustomItemLongClickListener longClickListener;
     private ImageView camImage;
     private RelativeLayout rl;
+    private ArrayList<NoteModel> filter;
+    private NoteModel noteModel;
 
 
     public NoteAdapter(Context context, List<NoteModel> modelList, CustomItemClickListener listener, CustomItemLongClickListener longClickListener) {
@@ -106,7 +116,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(NoteAdapter.MyViewHolder holder, int position) {
 
-        NoteModel noteModel = modelList.get(position);
+
+//        if (this.filter != null) {
+//
+//            noteModel = modelList.get(position);
+//           // notifyDataSetChanged();
+//        } else {
+//            noteModel = modelList.get(position);
+//        }
+        noteModel = modelList.get(position);
+
+
         holder.title.setText(noteModel.getTitle().toString());
         holder.date.setText(noteModel.getDateTimeFormatted(context));
 
